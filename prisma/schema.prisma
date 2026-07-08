@@ -7,15 +7,15 @@ datasource db {
 }
 
 model Location {
-  id        Int         @id @default(autoincrement())
-  name      String
-  parentId  Int?
-  parent    Location?   @relation("LocationHierarchy", fields: [parentId], references: [id])
-  children  Location[]  @relation("LocationHierarchy")
+  id         Int         @id @default(autoincrement())
+  name       String
+  parentId   Int?
+  parent     Location?   @relation("LocationHierarchy", fields: [parentId], references: [id])
+  children   Location[]  @relation("LocationHierarchy")
   containers Container[]
 
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }
 
 model ContainerType {
@@ -28,46 +28,76 @@ model ContainerType {
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  items     Item[]
+  id             Int             @id @default(autoincrement())
+  name           String          @unique
+  inventoryItems InventoryItem[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model Container {
-  id              Int            @id @default(autoincrement())
-  binNumber       String         @unique
+  id              Int             @id @default(autoincrement())
+  binNumber       String          @unique
   name            String
   description     String?
   notes           String?
+  status          ContainerStatus @default(PARTIAL)
 
   locationId      Int?
-  location        Location?      @relation(fields: [locationId], references: [id])
+  location        Location?       @relation(fields: [locationId], references: [id])
 
   containerTypeId Int?
-  containerType   ContainerType? @relation(fields: [containerTypeId], references: [id])
+  containerType   ContainerType?  @relation(fields: [containerTypeId], references: [id])
 
-  items           Item[]
+  inventoryItems  InventoryItem[]
 
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  lastOpenedAt    DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 
-model Item {
-  id          Int       @id @default(autoincrement())
-  name        String
-  quantity    Int       @default(1)
-  condition   String?
-  notes       String?
+model InventoryItem {
+  id             Int           @id @default(autoincrement())
+  name           String
+  inventoryType  InventoryType @default(STANDARD_ITEM)
+  quantity       Int           @default(1)
+  condition      String?
+  notes          String?
 
-  containerId Int
-  container   Container @relation(fields: [containerId], references: [id], onDelete: Cascade)
+  manufacturer   String?
+  modelNumber    String?
+  serialNumber   String?
+  purchaseDate   DateTime?
+  purchasePrice  Float?
+  warrantyEnd    DateTime?
 
-  categoryId  Int?
-  category    Category? @relation(fields: [categoryId], references: [id])
+  partNumber     String?
+  replacementIntervalDays Int?
+  minimumQuantity Int?
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  documentType   String?
+  expirationDate DateTime?
+
+  containerId    Int
+  container      Container     @relation(fields: [containerId], references: [id], onDelete: Cascade)
+
+  categoryId     Int?
+  category       Category?     @relation(fields: [categoryId], references: [id])
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+enum InventoryType {
+  STANDARD_ITEM
+  ASSET
+  CONSUMABLE
+  DOCUMENT
+}
+
+enum ContainerStatus {
+  EMPTY
+  PARTIAL
+  COMPLETE
 }
