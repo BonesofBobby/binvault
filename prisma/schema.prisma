@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Location {
+  id        Int         @id @default(autoincrement())
+  name      String
+  parentId  Int?
+  parent    Location?   @relation("LocationHierarchy", fields: [parentId], references: [id])
+  children  Location[]  @relation("LocationHierarchy")
+  containers Container[]
+
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model ContainerType {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  containers Container[]
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  items     Item[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Container {
+  id              Int            @id @default(autoincrement())
+  binNumber       String         @unique
+  name            String
+  description     String?
+  notes           String?
+
+  locationId      Int?
+  location        Location?      @relation(fields: [locationId], references: [id])
+
+  containerTypeId Int?
+  containerType   ContainerType? @relation(fields: [containerTypeId], references: [id])
+
+  items           Item[]
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model Item {
+  id          Int       @id @default(autoincrement())
+  name        String
+  quantity    Int       @default(1)
+  condition   String?
+  notes       String?
+
+  containerId Int
+  container   Container @relation(fields: [containerId], references: [id], onDelete: Cascade)
+
+  categoryId  Int?
+  category    Category? @relation(fields: [categoryId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
