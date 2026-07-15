@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Boxes,
   ClipboardList,
@@ -58,8 +59,9 @@ export default async function InventoryPage() {
 
             <div className="divide-y divide-slate-800">
               {inventoryItems.map((item) => (
-                <article
+                <Link
                   key={item.id}
+                  href={`/inventory/${item.id}`}
                   className="grid gap-4 p-5 transition hover:bg-slate-800/40 md:grid-cols-[2fr_1fr_100px_1fr_1fr] md:items-center"
                 >
                   <div>
@@ -104,7 +106,7 @@ export default async function InventoryPage() {
                     <MapPin className="h-4 w-4" />
                     {item.container.location?.name ?? "No location"}
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           </div>
