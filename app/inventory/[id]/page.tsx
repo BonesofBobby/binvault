@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AppBreadcrumbs } from "@/components/ui/app-breadcrumbs";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
@@ -80,6 +81,17 @@ export default async function InventoryDetailPage({
   return (
     <AppShell>
       <div className="space-y-8">
+        <AppBreadcrumbs
+  items={[
+    {
+      label: "Inventory",
+      href: "/inventory",
+    },
+    {
+      label: item.name,
+    },
+  ]}
+/>
         <Link
           href="/inventory"
           className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"

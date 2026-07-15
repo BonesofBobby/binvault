@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import { AppShell } from "@/components/layout/AppShell";
+import { AppBreadcrumbs } from "@/components/ui/app-breadcrumbs";
 import { PageHeader } from "@/components/ui/page-header";
 import { prisma } from "@/lib/db/prisma";
 
@@ -29,6 +30,14 @@ export default async function InventoryPage() {
   return (
     <AppShell>
       <div className="space-y-8">
+        <AppBreadcrumbs
+          items={[
+            {
+              label: "Inventory",
+            },
+          ]}
+        />
+
         <PageHeader
           eyebrow="Inventory"
           title="Everything You Own"
@@ -71,7 +80,9 @@ export default async function InventoryPage() {
                       </div>
 
                       <div>
-                        <h2 className="font-semibold">{item.name}</h2>
+                        <h2 className="font-semibold">
+                          {item.name}
+                        </h2>
 
                         <div className="mt-1 flex items-center gap-2 text-sm text-slate-400">
                           <Tag className="h-3.5 w-3.5" />
@@ -96,6 +107,7 @@ export default async function InventoryPage() {
 
                     <div>
                       <p>{item.container.name}</p>
+
                       <p className="text-xs text-blue-400">
                         {item.container.binNumber}
                       </p>
