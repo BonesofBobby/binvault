@@ -99,10 +99,13 @@ export default async function ContainerDetailPage({
                 QR Label
               </button>
 
-              <button className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-500">
-                <PackagePlus className="h-4 w-4" />
-                Add Inventory
-              </button>
+              <Link
+  href={`/storage/${container.id}/inventory/new`}
+  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-500"
+>
+  <PackagePlus className="h-4 w-4" />
+  Add Inventory
+</Link>
             </div>
           </div>
 
