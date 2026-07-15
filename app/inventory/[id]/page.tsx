@@ -102,13 +102,13 @@ export default async function InventoryDetailPage({
                 QR Code
               </button>
 
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-500"
-              >
-                <Edit className="h-4 w-4" />
-                Edit
-              </button>
+             <Link
+  href={`/inventory/${item.id}/edit`}
+  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-500"
+>
+  <Edit className="h-4 w-4" />
+  Edit
+</Link>
             </>
           }
         />
