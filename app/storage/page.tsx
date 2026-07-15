@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { AppShell } from "@/components/layout/AppShell";
-import { prisma } from "@/lib/db/prisma";
 import { Box, MapPin, PackageOpen, Plus } from "lucide-react";
+
+import { AppShell } from "@/components/layout/AppShell";
+import { ContainerStatusBadge } from "@/components/storage/container-status-badge";
+import { PageHeader } from "@/components/ui/page-header";
+import { prisma } from "@/lib/db/prisma";
 
 export default async function StoragePage() {
   const containers = await prisma.container.findMany({
@@ -22,25 +25,26 @@ export default async function StoragePage() {
   return (
     <AppShell>
       <div className="space-y-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-blue-400">Storage</p>
-            <h1 className="mt-1 text-4xl font-bold">Containers</h1>
-            <p className="mt-2 text-slate-400">
-              Browse and manage every container in your home.
-            </p>
-          </div>
-
-          <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-500">
-            <Plus className="h-4 w-4" />
-            New Container
-          </button>
-        </div>
+        <PageHeader
+          eyebrow="Storage"
+          title="Containers"
+          description="Browse and manage every container in your home."
+          actions={
+            <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-500">
+              <Plus className="h-4 w-4" />
+              New Container
+            </button>
+          }
+        />
 
         {containers.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900 p-12 text-center">
             <PackageOpen className="mx-auto h-10 w-10 text-slate-500" />
-            <h2 className="mt-4 text-xl font-semibold">No containers yet</h2>
+
+            <h2 className="mt-4 text-xl font-semibold">
+              No containers yet
+            </h2>
+
             <p className="mt-2 text-slate-400">
               Add your first container to begin organizing your storage.
             </p>
@@ -57,9 +61,7 @@ export default async function StoragePage() {
                     <Box className="h-6 w-6 text-blue-400" />
                   </div>
 
-                  <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">
-                    {container.status}
-                  </span>
+                  <ContainerStatusBadge status={container.status} />
                 </div>
 
                 <div className="mt-5">
@@ -81,13 +83,16 @@ export default async function StoragePage() {
                 <div className="mt-5 space-y-2 text-sm text-slate-400">
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
-                    <span>{container.location?.name ?? "No location"}</span>
+                    <span>
+                      {container.location?.name ?? "No location"}
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Box className="h-4 w-4" />
                     <span>
-                      {container.containerType?.name ?? "No container type"}
+                      {container.containerType?.name ??
+                        "No container type"}
                     </span>
                   </div>
                 </div>
@@ -95,7 +100,9 @@ export default async function StoragePage() {
                 <div className="mt-6 flex items-center justify-between border-t border-slate-800 pt-4">
                   <span className="text-sm text-slate-400">
                     {container._count.inventoryItems}{" "}
-                    {container._count.inventoryItems === 1 ? "item" : "items"}
+                    {container._count.inventoryItems === 1
+                      ? "item"
+                      : "items"}
                   </span>
 
                   <Link

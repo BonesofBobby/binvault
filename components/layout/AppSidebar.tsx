@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Box,
+  ClipboardList,
   FileText,
   Home,
   Package,
@@ -16,9 +17,15 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   {
-    label: "Dashboard",
+    label: "Home",
     href: "/",
     icon: Home,
+    enabled: true,
+  },
+  {
+    label: "Inventory",
+    href: "/inventory",
+    icon: ClipboardList,
     enabled: true,
   },
   {
@@ -69,7 +76,9 @@ export function AppSidebar() {
 
         <div>
           <h1 className="text-lg font-bold">BinVault</h1>
-          <p className="text-xs text-blue-400">Know what you own.</p>
+          <p className="text-xs text-blue-400">
+            Know what you own. Know where it is.
+          </p>
         </div>
       </Link>
 
@@ -112,7 +121,7 @@ export function AppSidebar() {
                 "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition",
                 isActive
                   ? "bg-blue-600 text-white"
-                  : "text-slate-300 hover:bg-slate-800 hover:text-white",
+                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
               )}
             >
               <Icon className="h-4 w-4" />
