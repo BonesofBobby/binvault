@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/layout/AppShell";
+import { prisma } from "@/lib/db/prisma";
 import {
   Box,
   FileText,
@@ -8,29 +9,6 @@ import {
   Search,
   Tag,
 } from "lucide-react";
-
-const stats = [
-  {
-    label: "Containers",
-    value: "128",
-    icon: Box,
-  },
-  {
-    label: "Items",
-    value: "2,547",
-    icon: FileText,
-  },
-  {
-    label: "Locations",
-    value: "17",
-    icon: MapPin,
-  },
-  {
-    label: "Categories",
-    value: "42",
-    icon: Tag,
-  },
-];
 
 const quickActions = [
   {
@@ -76,16 +54,45 @@ const recentContainers = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const [containerCount, inventoryCount, locationCount, categoryCount] =
+    await Promise.all([
+      prisma.container.count(),
+      prisma.inventoryItem.count(),
+      prisma.location.count(),
+      prisma.category.count(),
+    ]);
+
+  const stats = [
+    {
+      label: "Containers",
+      value: containerCount.toString(),
+      icon: Box,
+    },
+    {
+      label: "Inventory",
+      value: inventoryCount.toString(),
+      icon: FileText,
+    },
+    {
+      label: "Locations",
+      value: locationCount.toString(),
+      icon: MapPin,
+    },
+    {
+      label: "Categories",
+      value: categoryCount.toString(),
+      icon: Tag,
+    },
+  ];
+
   return (
     <AppShell>
       <div className="space-y-8">
         <div>
           <p className="text-sm text-blue-400">Dashboard</p>
 
-          <h1 className="mt-1 text-4xl font-bold">
-            Welcome to BinVault
-          </h1>
+          <h1 className="mt-1 text-4xl font-bold">Welcome to BinVault</h1>
 
           <p className="mt-2 text-slate-400">
             Know what you own. Know where it is.
@@ -103,22 +110,16 @@ export default function Home() {
               >
                 <Icon className="mb-4 h-8 w-8 text-blue-400" />
 
-                <div className="text-3xl font-bold">
-                  {stat.value}
-                </div>
+                <div className="text-3xl font-bold">{stat.value}</div>
 
-                <div className="mt-1 text-slate-400">
-                  {stat.label}
-                </div>
+                <div className="mt-1 text-slate-400">{stat.label}</div>
               </div>
             );
           })}
         </div>
 
         <div>
-          <h2 className="mb-4 text-xl font-semibold">
-            Quick Actions
-          </h2>
+          <h2 className="mb-4 text-xl font-semibold">Quick Actions</h2>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {quickActions.map((action) => {
@@ -131,9 +132,7 @@ export default function Home() {
                 >
                   <Icon className="mb-4 h-7 w-7 text-blue-400" />
 
-                  <div className="font-semibold">
-                    {action.title}
-                  </div>
+                  <div className="font-semibold">{action.title}</div>
 
                   <div className="text-sm text-slate-400">
                     {action.subtitle}
@@ -157,22 +156,14 @@ export default function Home() {
               className="flex items-center justify-between border-b border-slate-800 p-5 last:border-none"
             >
               <div>
-                <div className="font-semibold">
-                  {container.bin}
-                </div>
+                <div className="font-semibold">{container.bin}</div>
 
-                <div className="text-slate-400">
-                  {container.name}
-                </div>
+                <div className="text-slate-400">{container.name}</div>
               </div>
 
-              <div className="text-slate-400">
-                {container.location}
-              </div>
+              <div className="text-slate-400">{container.location}</div>
 
-              <div className="text-slate-500">
-                {container.updated}
-              </div>
+              <div className="text-slate-500">{container.updated}</div>
             </div>
           ))}
         </div>
