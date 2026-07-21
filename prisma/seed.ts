@@ -34,7 +34,7 @@ async function main() {
     data: { name: "Kitchen", parentId: home.id },
   });
 
-  const laundry = await prisma.location.create({
+  await prisma.location.create({
     data: { name: "Laundry Room", parentId: home.id },
   });
 

@@ -43,9 +43,6 @@ export function GlobalSearch() {
     const trimmedQuery = query.trim();
 
     if (trimmedQuery.length < 2) {
-      setResults([]);
-      setIsLoading(false);
-      setIsOpen(false);
       return;
     }
 
@@ -79,7 +76,9 @@ export function GlobalSearch() {
           setIsOpen(true);
         }
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     }, 300);
 
@@ -89,13 +88,30 @@ export function GlobalSearch() {
     };
   }, [query]);
 
+  function handleQueryChange(value: string) {
+    setQuery(value);
+
+    if (value.trim().length < 2) {
+      setResults([]);
+      setIsLoading(false);
+      setIsOpen(false);
+    }
+  }
+
+  function handleResultSelected() {
+    setIsOpen(false);
+    setQuery("");
+    setResults([]);
+    setIsLoading(false);
+  }
+
   return (
     <div ref={wrapperRef} className="relative w-full max-w-xl">
       <Search className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
 
       <input
         value={query}
-        onChange={(event) => setQuery(event.target.value)}
+        onChange={(event) => handleQueryChange(event.target.value)}
         onFocus={() => {
           if (query.trim().length >= 2) {
             setIsOpen(true);
@@ -120,10 +136,7 @@ export function GlobalSearch() {
                 <Link
                   key={`${result.type}-${result.id}`}
                   href={result.href}
-                  onClick={() => {
-                    setIsOpen(false);
-                    setQuery("");
-                  }}
+                  onClick={handleResultSelected}
                   className="block p-4 transition hover:bg-slate-900"
                 >
                   <div className="flex items-start justify-between gap-4">
