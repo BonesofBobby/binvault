@@ -1,5 +1,6 @@
-import { Bell, Search } from "lucide-react";
+import { Bell } from "lucide-react";
 
+import { GlobalSearch } from "@/components/layout/global-search";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -10,14 +11,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <main className="min-w-0 flex-1">
           <header className="flex h-20 items-center justify-between border-b border-slate-800 px-8">
-            <div className="relative w-full max-w-xl">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
-
-              <input
-                className="w-full rounded-xl border border-slate-800 bg-slate-900 px-10 py-2.5 text-sm outline-none placeholder:text-slate-500 focus:border-blue-500"
-                placeholder="Search anything..."
-              />
-            </div>
+            <GlobalSearch />
 
             <div className="ml-6 flex items-center gap-4">
               <button
