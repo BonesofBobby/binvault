@@ -58,35 +58,60 @@ model Container {
 }
 
 model InventoryItem {
-  id             Int           @id @default(autoincrement())
-  name           String
-  inventoryType  InventoryType @default(STANDARD_ITEM)
-  quantity       Int           @default(1)
-  condition      String?
-  notes          String?
+  id                      Int           @id @default(autoincrement())
+  name                    String
+  inventoryType           InventoryType @default(STANDARD_ITEM)
+  quantity                Int           @default(1)
+  condition               String?
+  notes                   String?
 
-  manufacturer   String?
-  modelNumber    String?
-  serialNumber   String?
-  purchaseDate   DateTime?
-  purchasePrice  Float?
-  warrantyEnd    DateTime?
+  manufacturer            String?
+  modelNumber             String?
+  serialNumber            String?
+  purchaseDate            DateTime?
+  purchasePrice           Float?
+  warrantyEnd             DateTime?
 
-  partNumber     String?
+  partNumber              String?
   replacementIntervalDays Int?
-  minimumQuantity Int?
+  minimumQuantity         Int?
 
-  documentType   String?
-  expirationDate DateTime?
+  documentType            String?
+  expirationDate          DateTime?
 
-  containerId    Int
-  container      Container     @relation(fields: [containerId], references: [id], onDelete: Cascade)
+  containerId             Int
+  container               Container     @relation(fields: [containerId], references: [id], onDelete: Cascade)
 
-  categoryId     Int?
-  category       Category?     @relation(fields: [categoryId], references: [id])
+  categoryId              Int?
+  category                Category?     @relation(fields: [categoryId], references: [id])
 
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  media                   Media[]
+
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+}
+
+model Media {
+  id            Int        @id @default(autoincrement())
+  mediaType     MediaType  @default(PHOTO)
+  fileName      String
+  originalName  String
+  mimeType      String
+  sizeBytes     Int
+  storagePath   String     @unique
+  width         Int?
+  height        Int?
+  caption       String?
+  sortOrder     Int        @default(0)
+
+  inventoryId   Int
+  inventory     InventoryItem @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([inventoryId])
+  @@index([inventoryId, sortOrder])
 }
 
 enum InventoryType {
@@ -100,4 +125,12 @@ enum ContainerStatus {
   EMPTY
   PARTIAL
   COMPLETE
+}
+
+enum MediaType {
+  PHOTO
+  RECEIPT
+  MANUAL
+  WARRANTY
+  DOCUMENT
 }

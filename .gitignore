@@ -60,3 +60,8 @@ dev.db
 
 # Next.js
 .next
+
+# BinVault locally uploaded media
+/public/uploads/*
+!/public/uploads/inventory/
+!/public/uploads/inventory/.gitkeep

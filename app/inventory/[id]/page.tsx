@@ -19,6 +19,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionHeader } from "@/components/ui/section-header";
 import { prisma } from "@/lib/db/prisma";
+import { InventoryMediaSection } from "@/components/inventory/inventory-media-section";
 
 type InventoryDetailPageProps = {
   params: Promise<{
@@ -349,7 +350,7 @@ export default async function InventoryDetailPage({
             </dl>
           </section>
         )}
-
+        <InventoryMediaSection inventoryId={item.id} />
         <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <SectionHeader
             title="Notes"
