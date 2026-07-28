@@ -632,6 +632,19 @@ git status
 
 When automated tests exist, also run the relevant test suite.
 
+BinVault uses Vitest for automated tests:
+
+```bash
+npm run test
+npm run test:run
+```
+
+Database-backed tests create a temporary SQLite database outside the repository,
+apply the existing migration SQL in order, clear test-owned records between
+cases, and remove the database after the run. Tests must override
+`DATABASE_URL` and must never use the development database or
+`public/uploads`.
+
 The expected result is:
 
 - No lint errors
