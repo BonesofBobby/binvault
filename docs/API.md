@@ -2,186 +2,87 @@
 
 ## Overview
 
-BinVault uses internal API routes to manage containers, items, locations, categories, container types, search, and QR label generation.
+BinVault uses server-rendered pages and Next.js server actions for current
+container and inventory management. Internal JSON API routes are used only
+where browser-side behavior requires them, currently search and inventory
+media operations.
 
 ## Base API Path
 
-/api
+`/api`
 
 ---
 
-## Containers
+## Container Management
 
-### Get All Containers
+Container management uses server actions rather than public JSON endpoints.
 
-GET /api/containers
+Implemented user workflows:
 
-Returns all containers with location, container type, and item count.
+- List and view containers
+- Create a container using an existing location and container type
+- Edit container information without changing associated inventory
+- Delete an empty container after explicit confirmation
 
-### Get One Container
+Container deletion is blocked when one or more inventory records remain. The
+user must resolve those records before the container can be deleted; BinVault
+does not cascade-delete inventory or media through the container-management
+workflow.
 
-GET /api/containers/:id
-
-Returns one container and all items inside it.
-
-### Create Container
-
-POST /api/containers
-
-Request body:
-
-{
-  "binNumber": "BIN-GARAGE-001",
-  "name": "Electrical Supplies Tote",
-  "description": "Clear tote with cables and electrical supplies",
-  "notes": "Stored on garage shelf A",
-  "locationId": 1,
-  "containerTypeId": 1
-}
-
-### Update Container
-
-PUT /api/containers/:id
-
-### Delete Container
-
-DELETE /api/containers/:id
-
----
-
-## Items
-
-### Create Item
-
-POST /api/items
-
-Request body:
-
-{
-  "containerId": 1,
-  "name": "HDMI Cable",
-  "quantity": 4,
-  "categoryId": 1,
-  "condition": "Good",
-  "notes": "Various lengths"
-}
-
-### Update Item
-
-PUT /api/items/:id
-
-### Delete Item
-
-DELETE /api/items/:id
-
----
-
-## Locations
-
-### Get Locations
-
-GET /api/locations
-
-### Create Location
-
-POST /api/locations
-
-Request body:
-
-{
-  "name": "Garage Shelf A",
-  "parentId": 1
-}
-
----
-
-## Container Types
-
-### Get Container Types
-
-GET /api/container-types
-
-### Create Container Type
-
-POST /api/container-types
-
-Request body:
-
-{
-  "name": "Plastic Tote"
-}
-
----
-
-## Categories
-
-### Get Categories
-
-GET /api/categories
-
-### Create Category
-
-POST /api/categories
-
-Request body:
-
-{
-  "name": "Electronics"
-}
+Location and container-type administration are not part of this workflow.
 
 ---
 
 ## Search
 
-### Search Containers and Items
+### Universal Search
 
-GET /api/search?q=hdmi
+```text
+GET /api/search?query=hdmi
+```
 
-Returns matching containers and items.
+Supported query parameters:
 
-Example result:
+- `query` or `q`: search text
+- `limit`: maximum result count
+- `entityTypes`: comma-separated inventory, container, location, or category
+  entity types
 
-{
-  "containers": [],
-  "items": [
-    {
-      "id": 1,
-      "name": "HDMI Cable",
-      "quantity": 4,
-      "container": {
-        "binNumber": "BIN-GARAGE-001",
-        "name": "Electrical Supplies Tote",
-        "location": "Garage Shelf A"
-      }
-    }
-  ]
-}
+The response contains ranked results, grouped results, the normalized query,
+the total match count, and a generation timestamp.
 
 ---
 
-## QR Labels
+## Inventory Media
 
-### Get QR Data
+### List Inventory Media
 
-GET /api/containers/:id/qr
+```text
+GET /api/inventory/:id/media
+```
 
-Returns QR-ready text for offline label generation.
+Returns media metadata and public URLs for one inventory record.
 
-Example:
+### Upload Inventory Photo
 
-BIN-GARAGE-001
-Electrical Supplies Tote
-Location: Garage Shelf A
+```text
+POST /api/inventory/:id/media
+```
 
-Contents:
-- HDMI Cable x4
-- Ethernet Cable x8
-- USB-C Charger x2
+Accepts multipart form data containing an image file and an optional caption.
 
-### Future Smart QR
+### Delete Media
 
-Future versions may support QR codes that link to:
+```text
+DELETE /api/media/:id
+```
 
-/containers/:id
+Deletes one media record and its stored file.
 
-instead of embedding full container contents.
+---
+
+## Planned API Areas
+
+There are currently no JSON endpoints for container CRUD, inventory CRUD,
+locations, categories, container types, QR labels, documents, or maintenance.
+Future endpoints should be added here only after they are implemented.
