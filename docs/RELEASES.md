@@ -39,22 +39,26 @@ The initial production-ready release of BinVault established the core architectu
 
 # Version 1.1.0 — Dashboard Intelligence
 
-**Status:** Planned
+**Status:** In Progress
 
 ## Goals
 
 Transform the dashboard into a Home Operations Center.
 
-### Planned Features
+### Implemented Features
 
 - Summary cards
 - Attention Center
-- Recent activity
 - Recently added items
 - Storage utilization
 - Household insights
-- Quick actions
 - Dashboard service
+- Automated dashboard service tests
+
+### Remaining Features
+
+- Recent activity
+- Quick actions
 
 ---
 

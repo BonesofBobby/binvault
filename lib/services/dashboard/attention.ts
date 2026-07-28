@@ -14,8 +14,14 @@ function addDays(date: Date, days: number): Date {
   return result;
 }
 
+function startOfDay(date: Date): Date {
+  const result = new Date(date);
+  result.setHours(0, 0, 0, 0);
+  return result;
+}
+
 export async function getDashboardAttention(): Promise<DashboardAttention> {
-  const today = new Date();
+  const today = startOfDay(new Date());
   const warningDate = addDays(today, WARNING_WINDOW_DAYS);
 
   const [
@@ -27,7 +33,6 @@ export async function getDashboardAttention(): Promise<DashboardAttention> {
       where: {
         inventoryType: InventoryType.DOCUMENT,
         expirationDate: {
-          gte: today,
           lte: warningDate,
         },
       },
@@ -39,7 +44,6 @@ export async function getDashboardAttention(): Promise<DashboardAttention> {
     prisma.inventoryItem.findMany({
       where: {
         warrantyEnd: {
-          gte: today,
           lte: warningDate,
         },
       },
@@ -64,12 +68,18 @@ export async function getDashboardAttention(): Promise<DashboardAttention> {
   const items: DashboardAttentionItem[] = [];
 
   for (const item of expiringDocuments) {
+    const isExpired =
+      item.expirationDate !== null &&
+      item.expirationDate < today;
+
     items.push({
       id: `document-${item.id}`,
       type: "expiring-document",
-      severity: "warning",
-      title: "Document Expiring",
-      description: `${item.name} expires soon.`,
+      severity: isExpired ? "critical" : "warning",
+      title: isExpired ? "Document Expired" : "Document Expiring",
+      description: isExpired
+        ? `${item.name} has expired.`
+        : `${item.name} expires soon.`,
       inventoryItemId: item.id,
       inventoryItemName: item.name,
       dueDate: item.expirationDate,
@@ -79,12 +89,18 @@ export async function getDashboardAttention(): Promise<DashboardAttention> {
   }
 
   for (const item of expiringWarranties) {
+    const isExpired =
+      item.warrantyEnd !== null &&
+      item.warrantyEnd < today;
+
     items.push({
       id: `warranty-${item.id}`,
       type: "expiring-warranty",
-      severity: "information",
-      title: "Warranty Expiring",
-      description: `${item.name} warranty expires soon.`,
+      severity: isExpired ? "warning" : "information",
+      title: isExpired ? "Warranty Expired" : "Warranty Expiring",
+      description: isExpired
+        ? `${item.name} warranty has expired.`
+        : `${item.name} warranty expires soon.`,
       inventoryItemId: item.id,
       inventoryItemName: item.name,
       dueDate: item.warrantyEnd,

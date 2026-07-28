@@ -1,3 +1,5 @@
+import { MediaType } from "@prisma/client";
+
 import { prisma } from "@/lib/db/prisma";
 import type {
   DashboardCategoryInsight,
@@ -97,7 +99,9 @@ export async function getDashboardInsights(): Promise<DashboardInsights> {
     prisma.inventoryItem.count({
       where: {
         media: {
-          none: {},
+          none: {
+            mediaType: MediaType.PHOTO,
+          },
         },
       },
     }),
@@ -128,8 +132,12 @@ export async function getDashboardInsights(): Promise<DashboardInsights> {
     }),
   );
 
+  const populatedCategoryInsights = categoryInsights.filter(
+    (category) => category.inventoryItemCount > 0,
+  );
+
   const mostUsedCategory =
-    categoryInsights.reduce<DashboardCategoryInsight | null>(
+    populatedCategoryInsights.reduce<DashboardCategoryInsight | null>(
       (currentMostUsed, category) => {
         if (!currentMostUsed) {
           return category;
@@ -143,6 +151,15 @@ export async function getDashboardInsights(): Promise<DashboardInsights> {
           category.inventoryItemCount ===
             currentMostUsed.inventoryItemCount &&
           category.totalQuantity > currentMostUsed.totalQuantity
+        ) {
+          return category;
+        }
+
+        if (
+          category.inventoryItemCount ===
+            currentMostUsed.inventoryItemCount &&
+          category.totalQuantity === currentMostUsed.totalQuantity &&
+          category.name.localeCompare(currentMostUsed.name) < 0
         ) {
           return category;
         }
@@ -166,6 +183,17 @@ export async function getDashboardInsights(): Promise<DashboardInsights> {
         if (
           container.totalQuantity === currentLargest.totalQuantity &&
           container.inventoryItemCount > currentLargest.inventoryItemCount
+        ) {
+          return container;
+        }
+
+        if (
+          container.totalQuantity === currentLargest.totalQuantity &&
+          container.inventoryItemCount ===
+            currentLargest.inventoryItemCount &&
+          container.binNumber.localeCompare(
+            currentLargest.binNumber,
+          ) < 0
         ) {
           return container;
         }
