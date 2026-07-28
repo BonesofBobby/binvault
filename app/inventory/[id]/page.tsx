@@ -3,6 +3,7 @@ import { AppBreadcrumbs } from "@/components/ui/app-breadcrumbs";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
+  ArrowRight,
   Box,
   CalendarDays,
   DollarSign,
@@ -12,14 +13,15 @@ import {
   Package,
   QrCode,
   Tag,
-  Trash2,
 } from "lucide-react";
 
+import { deleteInventoryItemAction } from "@/app/inventory/actions";
 import { AppShell } from "@/components/layout/AppShell";
+import { InventoryDeleteControl } from "@/components/inventory/inventory-delete-control";
+import { InventoryMediaSection } from "@/components/inventory/inventory-media-section";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionHeader } from "@/components/ui/section-header";
-import { prisma } from "@/lib/db/prisma";
-import { InventoryMediaSection } from "@/components/inventory/inventory-media-section";
+import { inventoryLifecycleService } from "@/lib/services/inventory-lifecycle-service";
 
 type InventoryDetailPageProps = {
   params: Promise<{
@@ -60,24 +62,17 @@ export default async function InventoryDetailPage({
     notFound();
   }
 
-  const item = await prisma.inventoryItem.findUnique({
-    where: {
-      id: inventoryId,
-    },
-    include: {
-      category: true,
-      container: {
-        include: {
-          location: true,
-          containerType: true,
-        },
-      },
-    },
-  });
+  const item =
+    await inventoryLifecycleService.getInventoryItem(inventoryId);
 
   if (!item) {
     notFound();
   }
+
+  const deleteAction = deleteInventoryItemAction.bind(
+    null,
+    inventoryId,
+  );
 
   return (
     <AppShell>
@@ -107,6 +102,14 @@ export default async function InventoryDetailPage({
           description="View inventory details, storage location, and type-specific information."
           actions={
             <>
+              <Link
+                href={`/inventory/${item.id}/move`}
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 font-medium text-slate-200 transition hover:border-blue-500 hover:bg-slate-800"
+              >
+                <ArrowRight className="h-4 w-4" />
+                Move
+              </Link>
+
               <button
                 type="button"
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 font-medium text-slate-200 transition hover:border-blue-500 hover:bg-slate-800"
@@ -363,13 +366,11 @@ export default async function InventoryDetailPage({
         </section>
 
         <section className="flex justify-end">
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 font-medium text-red-300 transition hover:bg-red-500/20"
-          >
-            <Trash2 className="h-4 w-4" />
-            Delete Inventory
-          </button>
+          <InventoryDeleteControl
+            itemName={item.name}
+            mediaCount={item._count.media}
+            action={deleteAction}
+          />
         </section>
       </div>
     </AppShell>

@@ -61,7 +61,6 @@ export async function updateInventoryItem(
     formData.get("inventoryType") ?? "STANDARD_ITEM",
   );
   const quantity = Number(formData.get("quantity") ?? 1);
-  const containerId = Number(formData.get("containerId"));
   const categoryIdValue = String(formData.get("categoryId") ?? "");
 
   if (!name) {
@@ -70,10 +69,6 @@ export async function updateInventoryItem(
 
   if (!Number.isInteger(quantity) || quantity < 1) {
     throw new Error("Quantity must be a whole number greater than zero.");
-  }
-
-  if (!Number.isInteger(containerId) || containerId < 1) {
-    throw new Error("A valid container is required.");
   }
 
   if (
@@ -116,7 +111,6 @@ export async function updateInventoryItem(
       name,
       inventoryType,
       quantity,
-      containerId,
       categoryId,
       condition: optionalString(formData, "condition"),
       notes: optionalString(formData, "notes"),
@@ -174,7 +168,6 @@ export async function updateInventoryItem(
   revalidatePath("/inventory");
   revalidatePath(`/inventory/${inventoryId}`);
   revalidatePath(`/storage/${existingItem.containerId}`);
-  revalidatePath(`/storage/${containerId}`);
 
   redirect(`/inventory/${inventoryId}`);
 }

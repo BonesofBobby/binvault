@@ -15,12 +15,6 @@ type CategoryOption = {
   name: string;
 };
 
-type ContainerOption = {
-  id: number;
-  binNumber: string;
-  name: string;
-};
-
 type InventoryEditFormProps = {
   item: {
     id: number;
@@ -29,7 +23,6 @@ type InventoryEditFormProps = {
     quantity: number;
     condition: string | null;
     notes: string | null;
-    containerId: number;
     categoryId: number | null;
     manufacturer: string | null;
     modelNumber: string | null;
@@ -44,7 +37,6 @@ type InventoryEditFormProps = {
     expirationDate: string;
   };
   categories: CategoryOption[];
-  containers: ContainerOption[];
   action: (formData: FormData) => void | Promise<void>;
 };
 
@@ -54,7 +46,6 @@ const inputClass =
 export function InventoryEditForm({
   item,
   categories,
-  containers,
   action,
 }: InventoryEditFormProps) {
   const [inventoryType, setInventoryType] =
@@ -124,22 +115,6 @@ export function InventoryEditForm({
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="space-y-2">
-            <span className="text-sm font-medium">Container</span>
-            <select
-              name="containerId"
-              defaultValue={item.containerId}
-              required
-              className={inputClass}
-            >
-              {containers.map((container) => (
-                <option key={container.id} value={container.id}>
-                  {container.binNumber} — {container.name}
                 </option>
               ))}
             </select>
