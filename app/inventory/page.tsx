@@ -12,7 +12,18 @@ import { AppBreadcrumbs } from "@/components/ui/app-breadcrumbs";
 import { PageHeader } from "@/components/ui/page-header";
 import { prisma } from "@/lib/db/prisma";
 
-export default async function InventoryPage() {
+type InventoryPageProps = {
+  searchParams: Promise<{
+    cleanupWarning?: string;
+    deleted?: string;
+  }>;
+};
+
+export default async function InventoryPage({
+  searchParams,
+}: InventoryPageProps) {
+  const { cleanupWarning, deleted } = await searchParams;
+  const failedCleanupCount = Number(cleanupWarning);
   const inventoryItems = await prisma.inventoryItem.findMany({
     include: {
       category: true,
@@ -43,6 +54,27 @@ export default async function InventoryPage() {
           title="Everything You Own"
           description="Browse household inventory and see exactly where each item is stored."
         />
+
+        {Number.isInteger(failedCleanupCount) &&
+        failedCleanupCount > 0 ? (
+          <div
+            role="alert"
+            className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-100"
+          >
+            The inventory record was deleted, but{" "}
+            {failedCleanupCount} associated media{" "}
+            {failedCleanupCount === 1 ? "file" : "files"} could not
+            be removed from storage. No file paths were exposed.
+          </div>
+        ) : deleted === "true" ? (
+          <div
+            role="status"
+            className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm text-emerald-100"
+          >
+            The inventory record and its associated media were
+            deleted.
+          </div>
+        ) : null}
 
         {inventoryItems.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900 p-12 text-center">

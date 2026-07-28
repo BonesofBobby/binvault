@@ -28,7 +28,7 @@ export default async function EditInventoryPage({
     notFound();
   }
 
-  const [item, categories, containers] = await Promise.all([
+  const [item, categories] = await Promise.all([
     prisma.inventoryItem.findUnique({
       where: {
         id: inventoryId,
@@ -37,18 +37,6 @@ export default async function EditInventoryPage({
     prisma.category.findMany({
       orderBy: {
         name: "asc",
-      },
-    }),
-    prisma.container.findMany({
-      orderBy: [
-        {
-          binNumber: "asc",
-        },
-      ],
-      select: {
-        id: true,
-        binNumber: true,
-        name: true,
       },
     }),
   ]);
@@ -73,7 +61,7 @@ export default async function EditInventoryPage({
         <PageHeader
           eyebrow="Edit Inventory"
           title={item.name}
-          description="Update general information, storage placement, and type-specific details."
+          description="Update general information and type-specific details. Use Move on the item detail page to change its container."
         />
 
         <InventoryEditForm
@@ -84,7 +72,6 @@ export default async function EditInventoryPage({
             quantity: item.quantity,
             condition: item.condition,
             notes: item.notes,
-            containerId: item.containerId,
             categoryId: item.categoryId,
             manufacturer: item.manufacturer,
             modelNumber: item.modelNumber,
@@ -100,7 +87,6 @@ export default async function EditInventoryPage({
             expirationDate: toDateInput(item.expirationDate),
           }}
           categories={categories}
-          containers={containers}
           action={updateAction}
         />
       </div>
