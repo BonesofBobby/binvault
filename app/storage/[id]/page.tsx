@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   Box,
+  Edit,
   MapPin,
   PackagePlus,
   QrCode,
@@ -10,7 +11,9 @@ import {
 } from "lucide-react";
 
 import { AppShell } from "@/components/layout/AppShell";
-import { prisma } from "@/lib/db/prisma";
+import { deleteContainerAction } from "@/app/storage/actions";
+import { ContainerDeleteControl } from "@/components/storage/container-delete-control";
+import { getContainer } from "@/lib/services/container-service";
 
 type ContainerDetailPageProps = {
   params: Promise<{
@@ -28,27 +31,16 @@ export default async function ContainerDetailPage({
     notFound();
   }
 
-  const container = await prisma.container.findUnique({
-    where: {
-      id: containerId,
-    },
-    include: {
-      location: true,
-      containerType: true,
-      inventoryItems: {
-        include: {
-          category: true,
-        },
-        orderBy: {
-          name: "asc",
-        },
-      },
-    },
-  });
+  const container = await getContainer(containerId);
 
   if (!container) {
     notFound();
   }
+
+  const deleteAction = deleteContainerAction.bind(
+    null,
+    container.id,
+  );
 
   return (
     <AppShell>
@@ -100,12 +92,20 @@ export default async function ContainerDetailPage({
               </button>
 
               <Link
-  href={`/storage/${container.id}/inventory/new`}
-  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-500"
->
-  <PackagePlus className="h-4 w-4" />
-  Add Inventory
-</Link>
+                href={`/storage/${container.id}/edit`}
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 font-medium text-slate-200 transition hover:border-blue-500 hover:bg-slate-800"
+              >
+                <Edit className="h-4 w-4" />
+                Edit Container
+              </Link>
+
+              <Link
+                href={`/storage/${container.id}/inventory/new`}
+                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-500"
+              >
+                <PackagePlus className="h-4 w-4" />
+                Add Inventory
+              </Link>
             </div>
           </div>
 
@@ -174,6 +174,22 @@ export default async function ContainerDetailPage({
               ))}
             </div>
           )}
+        </section>
+
+        <section className="rounded-2xl border border-red-500/30 bg-red-500/5 p-6">
+          <h2 className="text-xl font-semibold text-red-200">
+            Delete Container
+          </h2>
+          <p className="mt-1 mb-5 text-sm text-slate-400">
+            Deletion is available only when the container has no
+            inventory records.
+          </p>
+
+          <ContainerDeleteControl
+            containerName={container.name}
+            inventoryCount={container.inventoryItems.length}
+            action={deleteAction}
+          />
         </section>
       </div>
     </AppShell>
