@@ -4,6 +4,7 @@ import path from "node:path";
 import { MediaType } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
+import { recordEvent } from "@/lib/services/event-service";
 import { localFilesystemStorageProvider } from "@/lib/storage/local-filesystem-storage-provider";
 import type { StorageProvider } from "@/lib/storage/storage-provider";
 
@@ -57,6 +58,10 @@ function getSafeExtension(originalName: string, mimeType: string): string {
   }
 
   return extension;
+}
+
+function getHistoricalFileName(originalName: string): string {
+  return path.win32.basename(path.posix.basename(originalName));
 }
 
 function validatePhoto(input: SaveInventoryPhotoInput): void {
@@ -135,6 +140,7 @@ export function createMediaService(
         input.originalName,
         input.mimeType,
       );
+      const historicalFileName = getHistoricalFileName(input.originalName);
 
       const generatedFileName = `${randomUUID()}${extension}`;
       const directory = `inventory/${input.inventoryId}`;
@@ -150,18 +156,38 @@ export function createMediaService(
       });
 
       try {
-        return await prisma.media.create({
-          data: {
-            inventoryId: input.inventoryId,
-            mediaType: MediaType.PHOTO,
-            fileName: storedFile.fileName,
-            originalName: input.originalName,
-            mimeType: input.mimeType,
-            sizeBytes: storedFile.sizeBytes,
-            storagePath: storedFile.storagePath,
-            caption: input.caption?.trim() || null,
-            sortOrder: existingPhotoCount,
-          },
+        return await prisma.$transaction(async (transaction) => {
+          const media = await transaction.media.create({
+            data: {
+              inventoryId: input.inventoryId,
+              mediaType: MediaType.PHOTO,
+              fileName: storedFile.fileName,
+              originalName: input.originalName,
+              mimeType: input.mimeType,
+              sizeBytes: storedFile.sizeBytes,
+              storagePath: storedFile.storagePath,
+              caption: input.caption?.trim() || null,
+              sortOrder: existingPhotoCount,
+            },
+          });
+          await recordEvent(
+            {
+              eventType: "media.uploaded",
+              entityType: "inventory",
+              entityId: input.inventoryId,
+              summary: `Uploaded ${historicalFileName} to inventory item ${input.inventoryId}.`,
+              metadata: {
+                mediaId: media.id,
+                inventoryId: input.inventoryId,
+                originalName: historicalFileName,
+                mediaType: media.mediaType,
+                mimeType: media.mimeType,
+                sizeBytes: media.sizeBytes,
+              },
+            },
+            transaction,
+          );
+          return media;
         });
       } catch (error) {
         await storageProvider.delete(storedFile.storagePath);
@@ -178,6 +204,15 @@ export function createMediaService(
         where: {
           id: mediaId,
         },
+        select: {
+          id: true,
+          inventoryId: true,
+          originalName: true,
+          mediaType: true,
+          mimeType: true,
+          sizeBytes: true,
+          storagePath: true,
+        },
       });
 
       if (!media) {
@@ -186,10 +221,27 @@ export function createMediaService(
 
       await storageProvider.delete(media.storagePath);
 
-      await prisma.media.delete({
-        where: {
-          id: media.id,
-        },
+      const historicalFileName = getHistoricalFileName(media.originalName);
+
+      await prisma.$transaction(async (transaction) => {
+        await transaction.media.delete({ where: { id: media.id } });
+        await recordEvent(
+          {
+            eventType: "media.deleted",
+            entityType: "inventory",
+            entityId: media.inventoryId,
+            summary: `Deleted ${historicalFileName} from inventory item ${media.inventoryId}.`,
+            metadata: {
+              mediaId: media.id,
+              inventoryId: media.inventoryId,
+              originalName: historicalFileName,
+              mediaType: media.mediaType,
+              mimeType: media.mimeType,
+              sizeBytes: media.sizeBytes,
+            },
+          },
+          transaction,
+        );
       });
     },
 

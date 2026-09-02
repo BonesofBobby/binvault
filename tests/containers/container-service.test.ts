@@ -76,6 +76,12 @@ describe("Container management service", () => {
       containerTypeId: containerType.id,
       status: ContainerStatus.PARTIAL,
     });
+    await expect(
+      prisma.event.findFirst({ where: { eventType: "container.created" } }),
+    ).resolves.toMatchObject({
+      entityId: String(container.id),
+      summary: "Created container Electrical Supplies.",
+    });
   });
 
   it("rejects required fields that are missing", async () => {
@@ -189,6 +195,12 @@ describe("Container management service", () => {
       locationId: secondLocation.id,
       status: ContainerStatus.COMPLETE,
     });
+    await expect(
+      prisma.event.findFirst({ where: { eventType: "container.edited" } }),
+    ).resolves.toMatchObject({
+      entityId: String(container.id),
+      summary: "Edited container Updated Supplies.",
+    });
   });
 
   it("preserves associated inventory during updates", async () => {
@@ -242,6 +254,16 @@ describe("Container management service", () => {
     await deleteContainer(container.id);
 
     await expect(getContainer(container.id)).resolves.toBeNull();
+    await expect(
+      prisma.event.findFirst({ where: { eventType: "container.deleted" } }),
+    ).resolves.toMatchObject({
+      entityId: String(container.id),
+      summary: "Deleted container Electrical Supplies.",
+      metadata: expect.objectContaining({
+        containerName: "Electrical Supplies",
+        inventoryCount: 0,
+      }),
+    });
   });
 
   it("blocks deletion when inventory remains", async () => {
@@ -295,6 +317,9 @@ describe("Container management service", () => {
         },
       }),
     ).resolves.not.toBeNull();
+    await expect(
+      prisma.event.count({ where: { eventType: "container.deleted" } }),
+    ).resolves.toBe(0);
   });
 
   it("reports missing containers consistently", async () => {

@@ -1,9 +1,32 @@
+import { InventoryType } from "@prisma/client";
+
 import { prisma } from "@/lib/db/prisma";
+import { recordEvent } from "@/lib/services/event-service";
 import { localFilesystemStorageProvider } from "@/lib/storage/local-filesystem-storage-provider";
 import type { StorageProvider } from "@/lib/storage/storage-provider";
 
 export type InventoryLifecycleDependencies = {
   storageProvider?: StorageProvider;
+};
+
+export type InventoryManagementInput = {
+  name: string;
+  inventoryType: InventoryType;
+  quantity: number;
+  categoryId: number | null;
+  condition: string | null;
+  notes: string | null;
+  manufacturer?: string | null;
+  modelNumber?: string | null;
+  serialNumber?: string | null;
+  purchaseDate?: Date | null;
+  purchasePrice?: number | null;
+  warrantyEnd?: Date | null;
+  partNumber?: string | null;
+  replacementIntervalDays?: number | null;
+  minimumQuantity?: number | null;
+  documentType?: string | null;
+  expirationDate?: Date | null;
 };
 
 export class InventoryNotFoundError extends Error {
@@ -31,6 +54,88 @@ export function createInventoryLifecycleService(
     dependencies.storageProvider ?? localFilesystemStorageProvider;
 
   return {
+    async createInventoryItem(
+      containerId: number,
+      input: InventoryManagementInput,
+    ) {
+      if (!isValidId(containerId)) {
+        throw new Error("Container not found.");
+      }
+
+      return prisma.$transaction(async (transaction) => {
+        const container = await transaction.container.findUnique({
+          where: { id: containerId },
+          select: { id: true, name: true, binNumber: true },
+        });
+        if (!container) {
+          throw new Error("Container not found.");
+        }
+
+        const item = await transaction.inventoryItem.create({
+          data: { ...input, containerId },
+        });
+        await recordEvent(
+          {
+            eventType: "inventory.created",
+            entityType: "inventory",
+            entityId: item.id,
+            summary: `Created inventory item ${item.name}.`,
+            metadata: {
+              itemName: item.name,
+              containerId,
+              containerName: container.name,
+              containerBinNumber: container.binNumber,
+              inventoryType: item.inventoryType,
+              quantity: item.quantity,
+            },
+          },
+          transaction,
+        );
+        return item;
+      });
+    },
+
+    async updateInventoryItem(
+      inventoryId: number,
+      input: InventoryManagementInput,
+    ) {
+      if (!isValidId(inventoryId)) {
+        throw new InventoryNotFoundError();
+      }
+
+      return prisma.$transaction(async (transaction) => {
+        const existing = await transaction.inventoryItem.findUnique({
+          where: { id: inventoryId },
+          select: { id: true, name: true, containerId: true },
+        });
+        if (!existing) {
+          throw new InventoryNotFoundError();
+        }
+
+        const item = await transaction.inventoryItem.update({
+          where: { id: inventoryId },
+          data: input,
+        });
+        await recordEvent(
+          {
+            eventType: "inventory.edited",
+            entityType: "inventory",
+            entityId: item.id,
+            summary: `Edited inventory item ${item.name}.`,
+            metadata: {
+              itemName: item.name,
+              previousItemName: existing.name,
+              containerId: item.containerId,
+              inventoryType: item.inventoryType,
+              quantity: item.quantity,
+            },
+          },
+          transaction,
+        );
+        return item;
+      });
+    },
+
     async getInventoryItem(inventoryId: number) {
       if (!isValidId(inventoryId)) {
         return null;
@@ -142,7 +247,9 @@ export function createInventoryLifecycleService(
           },
           select: {
             id: true,
+            name: true,
             containerId: true,
+            container: { select: { name: true, binNumber: true } },
           },
         });
 
@@ -163,6 +270,8 @@ export function createInventoryLifecycleService(
             },
             select: {
               id: true,
+              name: true,
+              binNumber: true,
             },
           });
 
@@ -180,6 +289,25 @@ export function createInventoryLifecycleService(
             containerId: destinationContainerId,
           },
         });
+
+        await recordEvent(
+          {
+            eventType: "inventory.moved",
+            entityType: "inventory",
+            entityId: movedItem.id,
+            summary: `Moved ${item.name} from ${item.container.name} to ${destination.name}.`,
+            metadata: {
+              itemName: item.name,
+              sourceContainerId: item.containerId,
+              sourceContainerName: item.container.name,
+              sourceContainerBinNumber: item.container.binNumber,
+              destinationContainerId,
+              destinationContainerName: destination.name,
+              destinationContainerBinNumber: destination.binNumber,
+            },
+          },
+          transaction,
+        );
 
         return {
           item: movedItem,
@@ -236,6 +364,10 @@ export function createInventoryLifecycleService(
                 id: true,
                 name: true,
                 containerId: true,
+                inventoryType: true,
+                quantity: true,
+                category: { select: { id: true, name: true } },
+                container: { select: { name: true, binNumber: true } },
                 media: {
                   select: {
                     storagePath: true,
@@ -253,6 +385,27 @@ export function createInventoryLifecycleService(
               id: item.id,
             },
           });
+
+          await recordEvent(
+            {
+              eventType: "inventory.deleted",
+              entityType: "inventory",
+              entityId: item.id,
+              summary: `Deleted inventory item ${item.name}.`,
+              metadata: {
+                itemName: item.name,
+                formerContainerId: item.containerId,
+                formerContainerName: item.container.name,
+                formerContainerBinNumber: item.container.binNumber,
+                categoryId: item.category?.id ?? null,
+                categoryName: item.category?.name ?? null,
+                inventoryType: item.inventoryType,
+                quantity: item.quantity,
+                mediaCount: item.media.length,
+              },
+            },
+            transaction,
+          );
 
           return item;
         },

@@ -114,6 +114,24 @@ model Media {
   @@index([inventoryId, sortOrder])
 }
 
+/// Durable, append-only application history. Entity and actor identifiers are
+/// intentionally not foreign keys so history survives deletion and future
+/// authenticated actors can be represented without a current User model.
+model Event {
+  id         Int      @id @default(autoincrement())
+  eventType  String
+  entityType String
+  entityId   String?
+  summary    String
+  metadata   Json?
+  actorType  String
+  actorId    String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt, id])
+  @@index([entityType, entityId, createdAt, id])
+}
+
 enum InventoryType {
   STANDARD_ITEM
   ASSET

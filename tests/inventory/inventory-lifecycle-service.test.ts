@@ -102,6 +102,37 @@ async function createInventoryFixture() {
 }
 
 describe("Inventory lifecycle service", () => {
+  it("records create and edit events through managed lifecycle writes", async () => {
+    const source = await createContainer("BIN-001", "Source");
+    const service = createInventoryLifecycleService();
+    const item = await service.createInventoryItem(source.id, {
+      name: "Cordless Drill",
+      inventoryType: InventoryType.ASSET,
+      quantity: 1,
+      categoryId: null,
+      condition: "Good",
+      notes: null,
+    });
+    await service.updateInventoryItem(item.id, {
+      name: "Cordless Drill Kit",
+      inventoryType: InventoryType.ASSET,
+      quantity: 2,
+      categoryId: null,
+      condition: "Excellent",
+      notes: null,
+    });
+
+    const events = await prisma.event.findMany({ orderBy: { id: "asc" } });
+    expect(events.map((event) => event.eventType)).toEqual([
+      "inventory.created",
+      "inventory.edited",
+    ]);
+    expect(events[1]).toMatchObject({
+      entityId: String(item.id),
+      summary: "Edited inventory item Cordless Drill Kit.",
+    });
+  });
+
   it("retrieves lifecycle details and excludes the current container from destinations", async () => {
     const { source, destination, item } =
       await createInventoryFixture();
@@ -191,6 +222,16 @@ describe("Inventory lifecycle service", () => {
     expect(moved.updatedAt.getTime()).toBeGreaterThan(
       item.updatedAt.getTime(),
     );
+    await expect(
+      prisma.event.findFirst({ where: { eventType: "inventory.moved" } }),
+    ).resolves.toMatchObject({
+      entityId: String(item.id),
+      summary: "Moved Cordless Drill from Source to Destination.",
+      metadata: expect.objectContaining({
+        sourceContainerId: source.id,
+        destinationContainerId: destination.id,
+      }),
+    });
   });
 
   it("rejects the current container as a destination", async () => {
@@ -203,6 +244,28 @@ describe("Inventory lifecycle service", () => {
       name: "InventoryMoveValidationError",
       destinationError: "Select a different container.",
     });
+    await expect(prisma.event.count()).resolves.toBe(0);
+  });
+
+  it("rolls back a move when event persistence fails", async () => {
+    const { source, destination, item } = await createInventoryFixture();
+    const service = createInventoryLifecycleService();
+    await prisma.$executeRawUnsafe(
+      'CREATE TRIGGER reject_event_insert BEFORE INSERT ON "Event" BEGIN SELECT RAISE(ABORT, \'event failure\'); END',
+    );
+
+    try {
+      await expect(
+        service.moveInventoryItem(item.id, destination.id),
+      ).rejects.toThrow();
+    } finally {
+      await prisma.$executeRawUnsafe("DROP TRIGGER reject_event_insert");
+    }
+
+    await expect(
+      prisma.inventoryItem.findUniqueOrThrow({ where: { id: item.id } }),
+    ).resolves.toMatchObject({ containerId: source.id });
+    await expect(prisma.event.count()).resolves.toBe(0);
   });
 
   it("rejects invalid and stale destination containers", async () => {
@@ -303,6 +366,17 @@ describe("Inventory lifecycle service", () => {
         },
       }),
     ).resolves.toBeNull();
+    await expect(
+      prisma.event.findFirst({ where: { eventType: "inventory.deleted" } }),
+    ).resolves.toMatchObject({
+      entityId: String(item.id),
+      summary: "Deleted inventory item Cordless Drill.",
+      metadata: expect.objectContaining({
+        itemName: "Cordless Drill",
+        formerContainerId: item.containerId,
+        mediaCount: 0,
+      }),
+    });
   });
 
   it("deletes one associated media record and file after the database commit", async () => {

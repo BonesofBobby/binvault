@@ -112,6 +112,33 @@ deleted and the user receives a cleanup warning containing only a failure
 count, never internal file paths. A future reconciliation job should identify
 and remove such orphaned files; Phase 1 does not introduce a background queue.
 
+## Activity and Audit History
+
+Important inventory, container, and supported media changes write append-only
+application events. Inventory and container detail pages read entity history;
+Dashboard Intelligence reads a limited global Recent Activity list. Events are
+ordered newest first with an ID tie-breaker and remain available after the
+referenced entity is deleted.
+
+Database mutations and event writes share a Prisma transaction. A failed
+mutation does not produce a success event, and an event-write failure rolls the
+database mutation back.
+
+Media operations also involve the filesystem, which cannot participate in the
+SQLite transaction. Upload stores the file first, then creates the media record
+and event in one database transaction; a database failure triggers best-effort
+file cleanup. Individual media deletion removes the file first and only then
+deletes the database record and writes its event transactionally, so a failed
+filesystem deletion produces no success event. Inventory deletion commits the
+record and event before best-effort cleanup of owned files. These safeguards do
+not make SQLite and filesystem changes globally atomic, and a process
+interruption can still leave an orphaned file or a media record whose file was
+already removed.
+
+Authentication, users, and user attribution are not implemented. There is no
+global activity-management page, filtering, pagination, event editing, event
+deletion, replay, export, notification, analytics, or automation workflow.
+
 ---
 
 ## Planned API Areas

@@ -14,6 +14,11 @@ import { getDashboardAttention } from "@/lib/services/dashboard/attention";
 import { dashboardService } from "@/lib/services/dashboard/dashboard-service";
 import { getDashboardInsights } from "@/lib/services/dashboard/insights";
 import { getDashboardRecentItems } from "@/lib/services/dashboard/recent-items";
+import {
+  DASHBOARD_RECENT_ACTIVITY_LIMIT,
+  getDashboardRecentActivity,
+} from "@/lib/services/dashboard/recent-activity";
+import { recordEvent } from "@/lib/services/event-service";
 import { getDashboardStorage } from "@/lib/services/dashboard/storage";
 import { getDashboardSummary } from "@/lib/services/dashboard/summary";
 
@@ -94,6 +99,7 @@ describe("Dashboard Intelligence", () => {
       informationCount: 0,
     });
     await expect(getDashboardRecentItems()).resolves.toEqual([]);
+    await expect(getDashboardRecentActivity()).resolves.toEqual([]);
     await expect(getDashboardStorage()).resolves.toEqual([]);
     await expect(getDashboardInsights()).resolves.toEqual({
       mostUsedCategory: null,
@@ -400,6 +406,38 @@ describe("Dashboard Intelligence", () => {
       "Newest",
       "Middle",
     ]);
+  });
+
+  it("orders and limits recent activity while retaining deleted-entity events", async () => {
+    const timestamp = new Date("2026-04-01T00:00:00.000Z");
+    for (let index = 0; index < DASHBOARD_RECENT_ACTIVITY_LIMIT + 2; index += 1) {
+      await recordEvent({
+        eventType:
+          index === DASHBOARD_RECENT_ACTIVITY_LIMIT + 1
+            ? "inventory.deleted"
+            : "inventory.edited",
+        entityType: "inventory",
+        entityId: index + 1,
+        summary:
+          index === DASHBOARD_RECENT_ACTIVITY_LIMIT + 1
+            ? "Deleted inventory item Gone."
+            : `Edited item ${index}.`,
+        createdAt: timestamp,
+      });
+    }
+
+    const activity = await getDashboardRecentActivity();
+    expect(activity).toHaveLength(DASHBOARD_RECENT_ACTIVITY_LIMIT);
+    expect(activity.map((event) => event.id)).toEqual(
+      [...activity.map((event) => event.id)].sort((a, b) => b - a),
+    );
+    expect(activity[0].summary).toBe("Deleted inventory item Gone.");
+
+    const deletion = await prisma.event.findFirstOrThrow({
+      where: { eventType: "inventory.deleted" },
+    });
+    await expect(prisma.inventoryItem.findUnique({ where: { id: 1 } })).resolves.toBeNull();
+    expect(deletion.summary).toBe("Deleted inventory item Gone.");
   });
 
   it("counts items without PHOTO media specifically", async () => {
