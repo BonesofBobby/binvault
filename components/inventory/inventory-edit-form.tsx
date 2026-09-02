@@ -60,7 +60,7 @@ export function InventoryEditForm({
     !categories.some((category) => String(category.id) === categoryValue);
 
   return (
-    <form action={formAction} className="space-y-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <form action={formAction} className="space-y-8 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6">
       {state.message ? (
         <p role="alert" className="rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
           {state.message}
@@ -167,8 +167,8 @@ export function InventoryEditForm({
         </label>
       </section>
 
-      <div className="flex justify-end gap-3 border-t border-slate-800 pt-6">
-        <Link href={cancelHref} className="rounded-xl border border-slate-700 px-4 py-2.5 font-medium text-slate-300 transition hover:bg-slate-800">Cancel</Link>
+      <div className="flex flex-col-reverse gap-3 border-t border-slate-800 pt-6 sm:flex-row sm:justify-end">
+        <Link href={cancelHref} className="inline-flex justify-center rounded-xl border border-slate-700 px-4 py-2.5 font-medium text-slate-300 transition hover:bg-slate-800">Cancel</Link>
         <Button type="submit" size="lg" disabled={isPending} className="h-11 rounded-xl px-4">
           <Save aria-hidden="true" />
           {isPending ? "Saving…" : submitLabel}

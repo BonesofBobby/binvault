@@ -11,7 +11,6 @@ import {
   Hash,
   MapPin,
   Package,
-  QrCode,
   Tag,
 } from "lucide-react";
 
@@ -114,21 +113,13 @@ export default async function InventoryDetailPage({
                 Move
               </Link>
 
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 font-medium text-slate-200 transition hover:border-blue-500 hover:bg-slate-800"
+              <Link
+                href={`/inventory/${item.id}/edit`}
+                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-500"
               >
-                <QrCode className="h-4 w-4" />
-                QR Code
-              </button>
-
-             <Link
-  href={`/inventory/${item.id}/edit`}
-  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-500"
->
-  <Edit className="h-4 w-4" />
-  Edit
-</Link>
+                <Edit className="h-4 w-4" />
+                Edit
+              </Link>
             </>
           }
         />

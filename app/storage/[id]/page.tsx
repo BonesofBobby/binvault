@@ -6,7 +6,6 @@ import {
   Edit,
   MapPin,
   PackagePlus,
-  QrCode,
   Tag,
 } from "lucide-react";
 
@@ -57,14 +56,14 @@ export default async function ContainerDetailPage({
           Back to Storage
         </Link>
 
-        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <p className="text-sm font-medium text-blue-400">
                 {container.binNumber}
               </p>
 
-              <h1 className="mt-2 text-4xl font-bold">{container.name}</h1>
+              <h1 className="mt-2 break-words text-3xl font-bold sm:text-4xl">{container.name}</h1>
 
               {container.description && (
                 <p className="mt-3 max-w-3xl text-slate-400">
@@ -90,11 +89,6 @@ export default async function ContainerDetailPage({
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <button className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 font-medium text-slate-200 transition hover:border-blue-500 hover:bg-slate-800">
-                <QrCode className="h-4 w-4" />
-                QR Label
-              </button>
-
               <Link
                 href={`/storage/${container.id}/edit`}
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 font-medium text-slate-200 transition hover:border-blue-500 hover:bg-slate-800"
