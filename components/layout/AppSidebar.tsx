@@ -59,8 +59,7 @@ const navItems = [
     label: "Settings",
     href: "/settings",
     icon: Settings,
-    enabled: false,
-    comingSoon: true,
+    enabled: true,
   },
 ];
 

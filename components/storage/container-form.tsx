@@ -299,13 +299,27 @@ export function ContainerForm({
 
       {locations.length === 0 ||
       containerTypes.length === 0 ? (
-        <p
+        <div
           role="status"
           className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-100"
         >
-          A location and container type must already exist before a
-          container can be saved.
-        </p>
+          <p className="font-medium">Finish first-run setup before saving this container.</p>
+          <p className="mt-1 text-amber-100/80">
+            Create the missing reusable values in Settings, then return here. No seed command is required.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            {locations.length === 0 ? (
+              <Link href="/settings/locations" className="font-medium underline underline-offset-4">
+                Create a location
+              </Link>
+            ) : null}
+            {containerTypes.length === 0 ? (
+              <Link href="/settings/container-types" className="font-medium underline underline-offset-4">
+                Create a container type
+              </Link>
+            ) : null}
+          </div>
+        </div>
       ) : null}
 
       <div className="flex flex-col-reverse gap-3 border-t border-slate-800 pt-6 sm:flex-row sm:justify-end">

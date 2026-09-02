@@ -16,7 +16,11 @@ type ActivityListProps = {
 function formatEventType(eventType: string) {
   return eventType
     .split(".")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .map((part) =>
+      part
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/^./, (character) => character.toUpperCase()),
+    )
     .join(" ");
 }
 

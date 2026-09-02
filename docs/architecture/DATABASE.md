@@ -46,3 +46,15 @@ no event update or deletion workflow.
 Reads use `createdAt DESC, id DESC` for deterministic ordering. Event metadata is
 curated historical context rather than a serialized database record. It must not
 contain binary data, secrets, environment data, or absolute filesystem paths.
+
+Reference-data create, edit, and delete operations for Locations, Container
+Types, and Categories record Events transactionally. Event rows retain string
+entity identifiers without foreign keys so deletion history remains readable.
+
+## Reference Data Integrity
+
+Locations may form a simple parent/child hierarchy. Service validation prevents
+self-parenting and cycles. Locations with child locations or containers,
+Container Types with containers, and Categories with inventory items cannot be
+deleted. These restrictions intentionally preserve user data rather than
+cascading or silently clearing relationships.

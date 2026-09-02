@@ -10,6 +10,15 @@ export const EVENT_TYPES = [
   "container.created",
   "container.edited",
   "container.deleted",
+  "location.created",
+  "location.edited",
+  "location.deleted",
+  "containerType.created",
+  "containerType.edited",
+  "containerType.deleted",
+  "category.created",
+  "category.edited",
+  "category.deleted",
   "media.uploaded",
   "media.deleted",
 ] as const;
@@ -18,6 +27,9 @@ export const ENTITY_TYPES = [
   "inventory",
   "container",
   "media",
+  "location",
+  "containerType",
+  "category",
 ] as const;
 
 export const ACTOR_TYPES = ["local-system", "user"] as const;
