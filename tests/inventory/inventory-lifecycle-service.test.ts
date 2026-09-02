@@ -108,18 +108,18 @@ describe("Inventory lifecycle service", () => {
     const item = await service.createInventoryItem(source.id, {
       name: "Cordless Drill",
       inventoryType: InventoryType.ASSET,
-      quantity: 1,
-      categoryId: null,
+      quantity: "1",
+      categoryId: "",
       condition: "Good",
-      notes: null,
+      notes: "",
     });
     await service.updateInventoryItem(item.id, {
       name: "Cordless Drill Kit",
       inventoryType: InventoryType.ASSET,
-      quantity: 2,
-      categoryId: null,
+      quantity: "2",
+      categoryId: "",
       condition: "Excellent",
-      notes: null,
+      notes: "",
     });
 
     const events = await prisma.event.findMany({ orderBy: { id: "asc" } });

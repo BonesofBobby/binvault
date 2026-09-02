@@ -127,6 +127,49 @@ Metadata must contain only the minimal, curated context needed to understand a
 past change. Do not pass complete Prisma records, storage paths, binary content,
 secrets, or environment values.
 
+## Inventory Mutation Reliability
+
+Inventory creation and editing use `lib/services/inventory-lifecycle-service.ts`
+as the shared validation and mutation boundary. Route actions and UI components
+must not independently reinterpret malformed inventory values or convert invalid
+input into `null`.
+
+Inventory mutations distinguish between four input states:
+
+- Omitted fields preserve the existing value during an edit.
+- Blank optional fields explicitly clear the existing value.
+- Valid submitted fields replace the existing value.
+- Invalid submitted fields reject the entire mutation and must not modify the
+  inventory record or write a success event.
+
+Required and structured values are validated by the lifecycle service.
+Inventory names are trimmed and required, quantities must be positive whole
+numbers, optional prices must be finite and non-negative, dates must represent
+real calendar dates, and relationship IDs must reference existing records.
+Optional string fields are trimmed and length-limited.
+
+BinVault currently supports these inventory types:
+
+- `STANDARD_ITEM`
+- `ASSET`
+- `CONSUMABLE`
+- `DOCUMENT`
+
+Type-specific metadata is supported for assets, consumables, and documents.
+Changing an item's inventory type does not automatically erase metadata belonging
+to its previous type. Hidden or omitted metadata is preserved unless the user
+explicitly submits that field for clearing. This prevents a type change from
+causing unrelated data loss.
+
+Categories remain optional. An inventory record may be Uncategorized. When a
+category ID is submitted, the lifecycle service verifies that the category still
+exists before committing the mutation.
+
+Inventory mutations and their corresponding application events are written in
+the same Prisma transaction. Validation failures, stale relationships, and
+failed mutations must not produce success events. Edit events may include a
+bounded list of changed field names, but should not contain complete before/after
+database records.
 ---
 
 # Recommended Folder Responsibilities

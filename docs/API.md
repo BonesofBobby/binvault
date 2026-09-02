@@ -83,8 +83,25 @@ Deletes one media record and its stored file.
 
 ## Inventory Lifecycle
 
-Inventory movement and full-record deletion use server actions rather than
-public JSON endpoints.
+## Inventory Lifecycle
+
+Inventory creation, editing, movement, and full-record deletion use server
+actions rather than public JSON endpoints.
+
+Inventory creation and editing share the validation boundary in
+`lib/services/inventory-lifecycle-service.ts`. Submitted values are validated
+before the database mutation is committed. Invalid input returns field-level
+feedback without modifying the inventory record or writing a success event.
+
+During editing, omitted fields preserve their existing values, blank optional
+fields explicitly clear their values, and valid submitted fields replace their
+existing values. Invalid submitted values never implicitly clear stored data.
+Type-specific metadata is preserved when an item's inventory type changes unless
+the corresponding field is explicitly submitted for clearing.
+
+Categories are optional. A submitted category must still exist when the mutation
+is processed; stale or invalid category references are rejected without changing
+the inventory record.
 
 Implemented user workflows:
 
