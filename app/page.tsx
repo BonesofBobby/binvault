@@ -1,5 +1,3 @@
-import { Search } from "lucide-react";
-
 import { AttentionCenter } from "@/components/dashboard/attention-center";
 import { DashboardInsights } from "@/components/dashboard/dashboard-insights";
 import { DashboardSummaryCards } from "@/components/dashboard/dashboard-summary-cards";
@@ -7,6 +5,7 @@ import { RecentlyAdded } from "@/components/dashboard/recently-added";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { StorageUtilization } from "@/components/dashboard/storage-utilization";
 import { AppShell } from "@/components/layout/AppShell";
+import { GlobalSearch } from "@/components/layout/global-search";
 import { PageHeader } from "@/components/ui/page-header";
 import { dashboardService } from "@/lib/services/dashboard/dashboard-service";
 
@@ -56,20 +55,12 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="relative mt-5">
-            <Search
-              aria-hidden="true"
-              className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground"
-            />
-
-            <input
-              type="search"
-              name="dashboard-search"
-              aria-label="Search BinVault inventory"
-              className="w-full rounded-xl border bg-background py-3 pl-12 pr-4 text-sm outline-none transition placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              placeholder="What are you looking for?"
-            />
-          </div>
+          <GlobalSearch
+            className="mt-5"
+            variant="dashboard"
+            ariaLabel="Search BinVault inventory"
+            placeholder="What are you looking for?"
+          />
         </section>
 
         <DashboardSummaryCards summary={dashboard.summary} />

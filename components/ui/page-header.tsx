@@ -20,7 +20,7 @@ export function PageHeader({
           <p className="text-sm font-medium text-blue-400">{eyebrow}</p>
         )}
 
-        <h1 className="mt-1 text-4xl font-bold tracking-tight">{title}</h1>
+        <h1 className="mt-1 break-words text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
 
         {description && (
           <p className="mt-2 max-w-3xl text-slate-400">{description}</p>

@@ -233,10 +233,10 @@ export function InventoryMediaGallery({
 
       <form
         onSubmit={handleUpload}
-        className="rounded-2xl border border-slate-800 bg-slate-950 p-5"
+        className="rounded-2xl border border-slate-800 bg-slate-950 p-4 sm:p-5"
       >
         <div className="grid gap-4 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
-          <div>
+          <div className="min-w-0">
             <label
               htmlFor="inventory-photo"
               className="mb-2 block text-sm font-medium text-slate-200"
@@ -253,7 +253,7 @@ export function InventoryMediaGallery({
               onChange={(event) =>
                 handleFileSelected(event.target.files?.[0] ?? null)
               }
-              className="block w-full cursor-pointer rounded-xl border border-slate-800 bg-slate-900 text-sm text-slate-300 file:mr-4 file:border-0 file:bg-blue-600 file:px-4 file:py-2.5 file:font-medium file:text-white hover:file:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+              className="block min-w-0 w-full cursor-pointer rounded-xl border border-slate-800 bg-slate-900 text-sm text-slate-300 file:mr-2 file:border-0 file:bg-blue-600 file:px-3 file:py-2.5 file:font-medium file:text-white hover:file:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60 sm:file:mr-4 sm:file:px-4"
             />
 
             <p className="mt-2 text-xs text-slate-500">
@@ -284,7 +284,7 @@ export function InventoryMediaGallery({
           <button
             type="submit"
             disabled={isUploading || !selectedFile}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50 lg:w-auto"
           >
             {isUploading ? (
               <>
@@ -301,7 +301,7 @@ export function InventoryMediaGallery({
         </div>
 
         {selectedFile && (
-          <p className="mt-4 text-sm text-slate-400">
+          <p className="mt-4 break-words text-sm text-slate-400">
             Selected:{" "}
             <span className="font-medium text-slate-200">
               {selectedFile.name}

@@ -53,7 +53,7 @@ export function InventoryMoveForm({
     <form
       action={formAction}
       noValidate
-      className="space-y-8 rounded-2xl border border-slate-800 bg-slate-900 p-6"
+      className="space-y-8 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6"
     >
       {state.message ? (
         <div

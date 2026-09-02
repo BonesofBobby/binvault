@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { cn } from "@/lib/utils";
+
 type SearchResult = {
   id: number;
   type: "inventory";
@@ -14,7 +16,17 @@ type SearchResult = {
   location: string;
 };
 
-export function GlobalSearch() {
+export function GlobalSearch({
+  className,
+  placeholder = "Search BinVault...",
+  ariaLabel = "Search BinVault",
+  variant = "header",
+}: {
+  className?: string;
+  placeholder?: string;
+  ariaLabel?: string;
+  variant?: "header" | "dashboard";
+}) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -106,8 +118,8 @@ export function GlobalSearch() {
   }
 
   return (
-    <div ref={wrapperRef} className="relative w-full max-w-xl">
-      <Search className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
+    <div ref={wrapperRef} className={cn("relative w-full", variant === "header" && "max-w-xl", className)}>
+      <Search className={cn("absolute text-slate-500", variant === "dashboard" ? "left-4 top-3.5 size-5" : "left-3 top-3 size-4")} />
 
       <input
         value={query}
@@ -117,9 +129,10 @@ export function GlobalSearch() {
             setIsOpen(true);
           }
         }}
-        className="w-full rounded-xl border border-slate-800 bg-slate-900 px-10 py-2.5 text-sm outline-none placeholder:text-slate-500 focus:border-blue-500"
-        placeholder="Search BinVault..."
-        aria-label="Search BinVault"
+        type="search"
+        className={cn("w-full rounded-xl border border-slate-800 bg-slate-900 text-sm outline-none placeholder:text-slate-500 focus:border-blue-500", variant === "dashboard" ? "py-3 pl-12 pr-4" : "px-10 py-2.5")}
+        placeholder={placeholder}
+        aria-label={ariaLabel}
       />
 
       {isOpen && (
