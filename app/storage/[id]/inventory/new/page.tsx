@@ -93,6 +93,15 @@ export default async function NewInventoryPage({
                 <option value="CONSUMABLE">Consumable</option>
                 <option value="DOCUMENT">Document</option>
               </select>
+              {categories.length === 0 ? (
+                <p className="text-xs text-slate-400">
+                  Categories are optional. Save this item as Uncategorized or{" "}
+                  <Link href="/settings/categories" className="text-blue-300 underline underline-offset-4">
+                    create a category in Settings
+                  </Link>
+                  .
+                </p>
+              ) : null}
             </label>
 
             <label className="space-y-2">
