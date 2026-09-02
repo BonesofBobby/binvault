@@ -65,29 +65,29 @@ export default async function EditInventoryPage({
         />
 
         <InventoryEditForm
-          item={{
-            id: item.id,
+          initialValues={{
             name: item.name,
             inventoryType: item.inventoryType,
-            quantity: item.quantity,
-            condition: item.condition,
-            notes: item.notes,
-            categoryId: item.categoryId,
-            manufacturer: item.manufacturer,
-            modelNumber: item.modelNumber,
-            serialNumber: item.serialNumber,
+            quantity: String(item.quantity),
+            condition: item.condition ?? "",
+            notes: item.notes ?? "",
+            categoryId: item.categoryId ? String(item.categoryId) : "",
+            manufacturer: item.manufacturer ?? "",
+            modelNumber: item.modelNumber ?? "",
+            serialNumber: item.serialNumber ?? "",
             purchaseDate: toDateInput(item.purchaseDate),
-            purchasePrice: item.purchasePrice,
+            purchasePrice: item.purchasePrice === null ? "" : String(item.purchasePrice),
             warrantyEnd: toDateInput(item.warrantyEnd),
-            partNumber: item.partNumber,
-            replacementIntervalDays:
-              item.replacementIntervalDays,
-            minimumQuantity: item.minimumQuantity,
-            documentType: item.documentType,
+            partNumber: item.partNumber ?? "",
+            replacementIntervalDays: item.replacementIntervalDays === null ? "" : String(item.replacementIntervalDays),
+            minimumQuantity: item.minimumQuantity === null ? "" : String(item.minimumQuantity),
+            documentType: item.documentType ?? "",
             expirationDate: toDateInput(item.expirationDate),
           }}
           categories={categories}
           action={updateAction}
+          cancelHref={`/inventory/${item.id}`}
+          submitLabel="Save Changes"
         />
       </div>
     </AppShell>
