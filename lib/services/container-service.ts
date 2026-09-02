@@ -4,6 +4,7 @@ import {
 } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
+import { recordEvent } from "@/lib/services/event-service";
 
 export type ContainerField =
   | "binNumber"
@@ -269,8 +270,25 @@ export async function createContainer(
   const data = await validateContainerInput(input);
 
   try {
-    return await prisma.container.create({
-      data,
+    return await prisma.$transaction(async (transaction) => {
+      const container = await transaction.container.create({ data });
+      await recordEvent(
+        {
+          eventType: "container.created",
+          entityType: "container",
+          entityId: container.id,
+          summary: `Created container ${container.name}.`,
+          metadata: {
+            containerName: container.name,
+            binNumber: container.binNumber,
+            locationId: container.locationId,
+            containerTypeId: container.containerTypeId,
+            status: container.status,
+          },
+        },
+        transaction,
+      );
+      return container;
     });
   } catch (error) {
     mapPrismaWriteError(error);
@@ -287,6 +305,8 @@ export async function updateContainer(
     },
     select: {
       id: true,
+      name: true,
+      binNumber: true,
     },
   });
 
@@ -300,11 +320,30 @@ export async function updateContainer(
   );
 
   try {
-    return await prisma.container.update({
-      where: {
-        id: containerId,
-      },
-      data,
+    return await prisma.$transaction(async (transaction) => {
+      const container = await transaction.container.update({
+        where: { id: containerId },
+        data,
+      });
+      await recordEvent(
+        {
+          eventType: "container.edited",
+          entityType: "container",
+          entityId: container.id,
+          summary: `Edited container ${container.name}.`,
+          metadata: {
+            containerName: container.name,
+            previousContainerName: existing.name,
+            binNumber: container.binNumber,
+            previousBinNumber: existing.binNumber,
+            locationId: container.locationId,
+            containerTypeId: container.containerTypeId,
+            status: container.status,
+          },
+        },
+        transaction,
+      );
+      return container;
     });
   } catch (error) {
     mapPrismaWriteError(error);
@@ -347,6 +386,11 @@ export async function deleteContainer(containerId: number) {
         },
         select: {
           id: true,
+          name: true,
+          binNumber: true,
+          location: { select: { id: true, name: true } },
+          containerType: { select: { id: true, name: true } },
+          status: true,
           _count: {
             select: {
               inventoryItems: true,
@@ -365,11 +409,31 @@ export async function deleteContainer(containerId: number) {
         );
       }
 
-      return transaction.container.delete({
+      const deleted = await transaction.container.delete({
         where: {
           id: container.id,
         },
       });
+      await recordEvent(
+        {
+          eventType: "container.deleted",
+          entityType: "container",
+          entityId: container.id,
+          summary: `Deleted container ${container.name}.`,
+          metadata: {
+            containerName: container.name,
+            binNumber: container.binNumber,
+            formerLocationId: container.location?.id ?? null,
+            formerLocationName: container.location?.name ?? null,
+            containerTypeId: container.containerType?.id ?? null,
+            containerTypeName: container.containerType?.name ?? null,
+            status: container.status,
+            inventoryCount: container._count.inventoryItems,
+          },
+        },
+        transaction,
+      );
+      return deleted;
     });
   } catch (error) {
     if (

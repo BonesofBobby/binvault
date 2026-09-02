@@ -53,6 +53,15 @@ export interface DashboardRecentItem {
   updatedAt: Date;
 }
 
+export interface DashboardRecentActivityItem {
+  id: number;
+  eventType: string;
+  entityType: string;
+  entityId: string | null;
+  summary: string;
+  createdAt: Date;
+}
+
 export interface DashboardStorageLocation {
   id: number;
   name: string;
@@ -101,6 +110,7 @@ export interface DashboardData {
   summary: DashboardSummary;
   attention: DashboardAttention;
   recentItems: DashboardRecentItem[];
+  recentActivity: DashboardRecentActivityItem[];
   storage: DashboardStorageLocation[];
   insights: DashboardInsights;
   generatedAt: Date;

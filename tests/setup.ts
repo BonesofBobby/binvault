@@ -18,6 +18,7 @@ if (!databasePath.includes("binvault-vitest-")) {
 
 beforeEach(async () => {
   await prisma.$transaction([
+    prisma.event.deleteMany(),
     prisma.media.deleteMany(),
     prisma.inventoryItem.deleteMany(),
     prisma.container.deleteMany(),

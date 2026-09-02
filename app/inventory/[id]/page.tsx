@@ -17,11 +17,13 @@ import {
 
 import { deleteInventoryItemAction } from "@/app/inventory/actions";
 import { AppShell } from "@/components/layout/AppShell";
+import { ActivityList } from "@/components/activity/activity-list";
 import { InventoryDeleteControl } from "@/components/inventory/inventory-delete-control";
 import { InventoryMediaSection } from "@/components/inventory/inventory-media-section";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionHeader } from "@/components/ui/section-header";
 import { inventoryLifecycleService } from "@/lib/services/inventory-lifecycle-service";
+import { getEventsForEntity } from "@/lib/services/event-service";
 
 type InventoryDetailPageProps = {
   params: Promise<{
@@ -68,6 +70,8 @@ export default async function InventoryDetailPage({
   if (!item) {
     notFound();
   }
+
+  const history = await getEventsForEntity("inventory", item.id);
 
   const deleteAction = deleteInventoryItemAction.bind(
     null,
@@ -354,6 +358,15 @@ export default async function InventoryDetailPage({
           </section>
         )}
         <InventoryMediaSection inventoryId={item.id} />
+        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6" aria-label="Activity and history">
+          <SectionHeader
+            title="Activity & History"
+            description="Recorded changes for this inventory item, newest first."
+          />
+          <div className="mt-6">
+            <ActivityList events={history} />
+          </div>
+        </section>
         <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <SectionHeader
             title="Notes"

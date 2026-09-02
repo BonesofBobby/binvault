@@ -29,3 +29,20 @@ InventoryItem
   ├── belongs to one Container
   ├── may belong to one Category
   └── has one InventoryType
+
+## Application Events
+
+`Event` is the durable application-history model used by entity history and
+Dashboard Recent Activity. It stores stable machine-readable event and entity
+types, a string entity ID when available, a human-readable summary, bounded JSON
+metadata, actor identity fields, and a creation timestamp.
+
+Events intentionally have no foreign keys to inventory, containers, media, or
+users. History therefore remains readable after a domain entity is deleted, and
+future authenticated actor IDs can be represented without a current `User`
+table. Normal application services treat events as append-only; BinVault exposes
+no event update or deletion workflow.
+
+Reads use `createdAt DESC, id DESC` for deterministic ordering. Event metadata is
+curated historical context rather than a serialized database record. It must not
+contain binary data, secrets, environment data, or absolute filesystem paths.

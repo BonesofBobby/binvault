@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { prisma } from "@/lib/db/prisma";
+import {
+  InventoryNotFoundError,
+  inventoryLifecycleService,
+} from "@/lib/services/inventory-lifecycle-service";
 
 const inventoryTypes = [
   "STANDARD_ITEM",
@@ -88,26 +91,14 @@ export async function updateInventoryItem(
     throw new Error("Invalid category.");
   }
 
-  const existingItem = await prisma.inventoryItem.findUnique({
-    where: { id: inventoryId },
-    select: {
-      id: true,
-      containerId: true,
-    },
-  });
-
-  if (!existingItem) {
-    throw new Error("Inventory record not found.");
-  }
-
   const inventoryType =
     inventoryTypeValue as InventoryTypeValue;
 
-  await prisma.inventoryItem.update({
-    where: {
-      id: inventoryId,
-    },
-    data: {
+  let updatedItem;
+  try {
+    updatedItem = await inventoryLifecycleService.updateInventoryItem(
+      inventoryId,
+      {
       name,
       inventoryType,
       quantity,
@@ -161,13 +152,19 @@ export async function updateInventoryItem(
         inventoryType === "DOCUMENT"
           ? optionalDate(formData, "expirationDate")
           : null,
-    },
-  });
+      },
+    );
+  } catch (error) {
+    if (error instanceof InventoryNotFoundError) {
+      throw new Error("Inventory record not found.");
+    }
+    throw error;
+  }
 
   revalidatePath("/");
   revalidatePath("/inventory");
   revalidatePath(`/inventory/${inventoryId}`);
-  revalidatePath(`/storage/${existingItem.containerId}`);
+  revalidatePath(`/storage/${updatedItem.containerId}`);
 
   redirect(`/inventory/${inventoryId}`);
 }

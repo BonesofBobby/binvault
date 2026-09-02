@@ -11,9 +11,11 @@ import {
 } from "lucide-react";
 
 import { AppShell } from "@/components/layout/AppShell";
+import { ActivityList } from "@/components/activity/activity-list";
 import { deleteContainerAction } from "@/app/storage/actions";
 import { ContainerDeleteControl } from "@/components/storage/container-delete-control";
 import { getContainer } from "@/lib/services/container-service";
+import { getEventsForEntity } from "@/lib/services/event-service";
 
 type ContainerDetailPageProps = {
   params: Promise<{
@@ -36,6 +38,8 @@ export default async function ContainerDetailPage({
   if (!container) {
     notFound();
   }
+
+  const history = await getEventsForEntity("container", container.id);
 
   const deleteAction = deleteContainerAction.bind(
     null,
@@ -174,6 +178,16 @@ export default async function ContainerDetailPage({
               ))}
             </div>
           )}
+        </section>
+
+        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6" aria-labelledby="container-history-heading">
+          <div>
+            <h2 id="container-history-heading" className="text-xl font-semibold">Activity & History</h2>
+            <p className="mt-1 text-sm text-slate-400">Recorded changes for this container, newest first.</p>
+          </div>
+          <div className="mt-6">
+            <ActivityList events={history} />
+          </div>
         </section>
 
         <section className="rounded-2xl border border-red-500/30 bg-red-500/5 p-6">

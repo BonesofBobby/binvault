@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { prisma } from "@/lib/db/prisma";
+import { inventoryLifecycleService } from "@/lib/services/inventory-lifecycle-service";
 
 const validInventoryTypes = [
   "STANDARD_ITEM",
@@ -54,22 +54,7 @@ export async function createInventoryItem(
     throw new Error("Invalid category.");
   }
 
-  const container = await prisma.container.findUnique({
-    where: {
-      id: containerId,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!container) {
-    throw new Error("Container not found.");
-  }
-
-  await prisma.inventoryItem.create({
-    data: {
-      containerId,
+  await inventoryLifecycleService.createInventoryItem(containerId, {
       name,
       inventoryType:
         inventoryTypeValue as InventoryTypeValue,
@@ -77,7 +62,17 @@ export async function createInventoryItem(
       categoryId,
       condition: condition || null,
       notes: notes || null,
-    },
+      manufacturer: null,
+      modelNumber: null,
+      serialNumber: null,
+      purchaseDate: null,
+      purchasePrice: null,
+      warrantyEnd: null,
+      partNumber: null,
+      replacementIntervalDays: null,
+      minimumQuantity: null,
+      documentType: null,
+      expirationDate: null,
   });
 
   revalidatePath("/");

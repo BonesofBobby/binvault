@@ -4,6 +4,7 @@ import { AttentionCenter } from "@/components/dashboard/attention-center";
 import { DashboardInsights } from "@/components/dashboard/dashboard-insights";
 import { DashboardSummaryCards } from "@/components/dashboard/dashboard-summary-cards";
 import { RecentlyAdded } from "@/components/dashboard/recently-added";
+import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { StorageUtilization } from "@/components/dashboard/storage-utilization";
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/ui/page-header";
@@ -74,6 +75,8 @@ export default async function Home() {
         <DashboardSummaryCards summary={dashboard.summary} />
 
         <AttentionCenter attention={dashboard.attention} />
+
+        <RecentActivity events={dashboard.recentActivity} />
 
         <div className="grid gap-10 xl:grid-cols-2">
           <RecentlyAdded items={dashboard.recentItems} />

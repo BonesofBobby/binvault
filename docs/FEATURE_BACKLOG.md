@@ -13,7 +13,6 @@ Features may move between this backlog and the product roadmap as priorities cha
 - Dashboard service
 - Summary cards
 - Attention Center
-- Recent activity
 - Recently added
 - Storage utilization
 - Household insights

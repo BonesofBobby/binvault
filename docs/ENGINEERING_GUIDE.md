@@ -111,6 +111,22 @@ A service should:
 
 Services should not contain user-interface code.
 
+## Application Event Writing
+
+`lib/services/event-service.ts` owns the validated event write contract and all
+event-history reads. Pages and components must not write directly to Prisma
+`Event`. Domain services pass their Prisma transaction client to `recordEvent`
+so a successful database mutation and its corresponding history entry commit or
+roll back together.
+
+Current application events use actor type `local-system` with no actor ID.
+`user` and a nullable string actor ID are modeled for future attribution, but
+authentication and user attribution are not implemented.
+
+Metadata must contain only the minimal, curated context needed to understand a
+past change. Do not pass complete Prisma records, storage paths, binary content,
+secrets, or environment values.
+
 ---
 
 # Recommended Folder Responsibilities
