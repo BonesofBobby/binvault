@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Boxes, FolderTree, MapPin } from "lucide-react";
+import { Boxes, FolderTree, MapPin, ArchiveRestore } from "lucide-react";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { AppBreadcrumbs } from "@/components/ui/app-breadcrumbs";
@@ -7,6 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PageHeader } from "@/components/ui/page-header";
 
 const sections = [
+  {
+    href: "/settings/backup",
+    title: "Backup & Recovery",
+    description: "Download and validate portable backups; restore while BinVault is stopped.",
+    icon: ArchiveRestore,
+  },
   {
     href: "/settings/locations",
     title: "Locations",

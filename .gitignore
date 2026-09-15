@@ -65,3 +65,12 @@ dev.db
 /public/uploads/*
 !/public/uploads/inventory/
 !/public/uploads/inventory/.gitkeep
+
+# Local recovery backups and interrupted swap material
+/.binvault-recovery/
+/public/uploads.rollback-*/
+/public/uploads.stage-*/
+/public/uploads.failed-*/
+*.db.rollback-*
+*.db.stage-*
+*.db.failed-*
