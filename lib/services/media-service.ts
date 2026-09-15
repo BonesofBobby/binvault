@@ -1,3 +1,4 @@
+import { maintenanceGate } from "@/lib/backup/coordination";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 
@@ -94,7 +95,7 @@ export function createMediaService(
   const storageProvider =
     dependencies.storageProvider ?? localFilesystemStorageProvider;
 
-  return {
+  const service = {
     async getInventoryMedia(inventoryId: number) {
       return prisma.media.findMany({
         where: {
@@ -248,6 +249,12 @@ export function createMediaService(
     getPublicUrl(storagePath: string): string {
       return storageProvider.getPublicUrl(storagePath);
     },
+  };
+  return { ...service,
+    saveInventoryPhoto: (...args: Parameters<typeof service.saveInventoryPhoto>) =>
+      maintenanceGate.mutation(() => service.saveInventoryPhoto(...args)),
+    deleteMedia: (...args: Parameters<typeof service.deleteMedia>) =>
+      maintenanceGate.mutation(() => service.deleteMedia(...args)),
   };
 }
 

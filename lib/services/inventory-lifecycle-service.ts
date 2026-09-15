@@ -1,3 +1,4 @@
+import { maintenanceGate } from "@/lib/backup/coordination";
 import { InventoryType, Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
@@ -322,7 +323,7 @@ export function createInventoryLifecycleService(
   const storageProvider =
     dependencies.storageProvider ?? localFilesystemStorageProvider;
 
-  return {
+  const service = {
     async createInventoryItem(
       containerId: number,
       input: InventoryMutationInput,
@@ -703,6 +704,16 @@ export function createInventoryLifecycleService(
         failedMediaCleanupCount,
       };
     },
+  };
+  return { ...service,
+    createInventoryItem: (...args: Parameters<typeof service.createInventoryItem>) =>
+      maintenanceGate.mutation(() => service.createInventoryItem(...args)),
+    updateInventoryItem: (...args: Parameters<typeof service.updateInventoryItem>) =>
+      maintenanceGate.mutation(() => service.updateInventoryItem(...args)),
+    moveInventoryItem: (...args: Parameters<typeof service.moveInventoryItem>) =>
+      maintenanceGate.mutation(() => service.moveInventoryItem(...args)),
+    deleteInventoryItem: (...args: Parameters<typeof service.deleteInventoryItem>) =>
+      maintenanceGate.mutation(() => service.deleteInventoryItem(...args)),
   };
 }
 

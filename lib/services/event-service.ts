@@ -1,3 +1,4 @@
+import { maintenanceGate } from "@/lib/backup/coordination";
 import { Prisma, type Event } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
@@ -175,7 +176,7 @@ function validateLimit(limit: number) {
   }
 }
 
-export async function recordEvent(
+async function recordEventCore(
   input: RecordEventInput,
   database: EventDatabase = prisma,
 ): Promise<Event> {
@@ -208,3 +209,6 @@ export async function getEventsForEntity(
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
   });
 }
+
+export const recordEvent = (...args: Parameters<typeof recordEventCore>) =>
+  maintenanceGate.mutation(() => recordEventCore(...args));

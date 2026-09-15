@@ -1,3 +1,4 @@
+import { maintenanceGate } from "@/lib/backup/coordination";
 import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/db/prisma";
@@ -187,7 +188,7 @@ export async function getLocation(locationId: number) {
   return prisma.location.findUnique({ where: { id: locationId } });
 }
 
-export async function createLocation(input: {
+async function createLocationCore(input: {
   name: string;
   parentId: number | null;
 }) {
@@ -212,7 +213,7 @@ export async function createLocation(input: {
   });
 }
 
-export async function updateLocation(
+async function updateLocationCore(
   locationId: number,
   input: { name: string; parentId: number | null },
 ) {
@@ -271,7 +272,7 @@ export async function evaluateLocationDeletion(locationId: number) {
   };
 }
 
-export async function deleteLocation(locationId: number) {
+async function deleteLocationCore(locationId: number) {
   validateId(locationId, "Location");
   return prisma.$transaction(async (transaction) => {
     const location = await transaction.location.findUnique({
@@ -325,7 +326,7 @@ export async function getContainerType(containerTypeId: number) {
   return prisma.containerType.findUnique({ where: { id: containerTypeId } });
 }
 
-export async function createContainerType(input: { name: string }) {
+async function createContainerTypeCore(input: { name: string }) {
   const name = normalizeName(input.name);
   try {
     return await prisma.$transaction(async (transaction) => {
@@ -347,7 +348,7 @@ export async function createContainerType(input: { name: string }) {
   }
 }
 
-export async function updateContainerType(
+async function updateContainerTypeCore(
   containerTypeId: number,
   input: { name: string },
 ) {
@@ -397,7 +398,7 @@ export async function evaluateContainerTypeDeletion(containerTypeId: number) {
   };
 }
 
-export async function deleteContainerType(containerTypeId: number) {
+async function deleteContainerTypeCore(containerTypeId: number) {
   validateId(containerTypeId, "Container type");
   return prisma.$transaction(async (transaction) => {
     const containerType = await transaction.containerType.findUnique({
@@ -437,7 +438,7 @@ export async function getCategory(categoryId: number) {
   return prisma.category.findUnique({ where: { id: categoryId } });
 }
 
-export async function createCategory(input: { name: string }) {
+async function createCategoryCore(input: { name: string }) {
   const name = normalizeName(input.name);
   try {
     return await prisma.$transaction(async (transaction) => {
@@ -459,7 +460,7 @@ export async function createCategory(input: { name: string }) {
   }
 }
 
-export async function updateCategory(categoryId: number, input: { name: string }) {
+async function updateCategoryCore(categoryId: number, input: { name: string }) {
   validateId(categoryId, "Category");
   const name = normalizeName(input.name);
   try {
@@ -506,7 +507,7 @@ export async function evaluateCategoryDeletion(categoryId: number) {
   };
 }
 
-export async function deleteCategory(categoryId: number) {
+async function deleteCategoryCore(categoryId: number) {
   validateId(categoryId, "Category");
   return prisma.$transaction(async (transaction) => {
     const category = await transaction.category.findUnique({
@@ -537,3 +538,22 @@ export async function deleteCategory(categoryId: number) {
     );
   });
 }
+
+export const createLocation = (...args: Parameters<typeof createLocationCore>) =>
+  maintenanceGate.mutation(() => createLocationCore(...args));
+export const updateLocation = (...args: Parameters<typeof updateLocationCore>) =>
+  maintenanceGate.mutation(() => updateLocationCore(...args));
+export const deleteLocation = (...args: Parameters<typeof deleteLocationCore>) =>
+  maintenanceGate.mutation(() => deleteLocationCore(...args));
+export const createContainerType = (...args: Parameters<typeof createContainerTypeCore>) =>
+  maintenanceGate.mutation(() => createContainerTypeCore(...args));
+export const updateContainerType = (...args: Parameters<typeof updateContainerTypeCore>) =>
+  maintenanceGate.mutation(() => updateContainerTypeCore(...args));
+export const deleteContainerType = (...args: Parameters<typeof deleteContainerTypeCore>) =>
+  maintenanceGate.mutation(() => deleteContainerTypeCore(...args));
+export const createCategory = (...args: Parameters<typeof createCategoryCore>) =>
+  maintenanceGate.mutation(() => createCategoryCore(...args));
+export const updateCategory = (...args: Parameters<typeof updateCategoryCore>) =>
+  maintenanceGate.mutation(() => updateCategoryCore(...args));
+export const deleteCategory = (...args: Parameters<typeof deleteCategoryCore>) =>
+  maintenanceGate.mutation(() => deleteCategoryCore(...args));

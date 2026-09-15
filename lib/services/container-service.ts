@@ -1,3 +1,4 @@
+import { maintenanceGate } from "@/lib/backup/coordination";
 import {
   ContainerStatus,
   Prisma,
@@ -264,7 +265,7 @@ export async function getContainerFormOptions() {
   };
 }
 
-export async function createContainer(
+async function createContainerCore(
   input: ContainerManagementInput,
 ) {
   const data = await validateContainerInput(input);
@@ -295,7 +296,7 @@ export async function createContainer(
   }
 }
 
-export async function updateContainer(
+async function updateContainerCore(
   containerId: number,
   input: ContainerManagementInput,
 ) {
@@ -377,7 +378,7 @@ export async function evaluateContainerDeletion(
   };
 }
 
-export async function deleteContainer(containerId: number) {
+async function deleteContainerCore(containerId: number) {
   try {
     return await prisma.$transaction(async (transaction) => {
       const container = await transaction.container.findUnique({
@@ -453,3 +454,10 @@ export async function deleteContainer(containerId: number) {
     throw error;
   }
 }
+
+export const createContainer = (...args: Parameters<typeof createContainerCore>) =>
+  maintenanceGate.mutation(() => createContainerCore(...args));
+export const updateContainer = (...args: Parameters<typeof updateContainerCore>) =>
+  maintenanceGate.mutation(() => updateContainerCore(...args));
+export const deleteContainer = (...args: Parameters<typeof deleteContainerCore>) =>
+  maintenanceGate.mutation(() => deleteContainerCore(...args));
