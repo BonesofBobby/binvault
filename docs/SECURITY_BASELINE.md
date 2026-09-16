@@ -1,15 +1,18 @@
 # BinVault v1.0 Security and Runtime Baseline
 
-This document records the security boundary reviewed on September 1, 2026. It
+This document records the security boundary reviewed on September 15, 2026. It
 is intentionally limited to the current local/private BinVault deployment.
 
 ## Supported deployment model
 
-BinVault v1.0 is a single-user, local/private application. It has no
+BinVault v1.0 is a single-user, single-process local/private application. It has no
 authentication or authorization layer. Run it on a trusted computer and bind it
 to loopback, or restrict access to a trusted private network with host/network
 controls. Do not expose this version directly to the public internet. A broader
 deployment model requires later authentication and application-security work.
+Production updates require a retained backup, stopped application processes,
+read-only pre-migration preflight, and explicit operator-controlled
+`prisma migrate deploy`. Ordinary application startup does not migrate or seed.
 
 ## Runtime
 
@@ -28,12 +31,11 @@ major-version audit fixes without compatibility review.
 
 ## Dependency audit
 
-The pre-change audit reported 18 vulnerable packages: 14 high, 4 moderate, and
-0 critical. Next.js `16.2.10` was a direct production finding and brought
-vulnerable PostCSS and Sharp versions into the production/build path. Updating
-Next.js and its matching ESLint config to `16.3.4`, followed by compatible
-transitive lockfile resolution, reduced the audit to 7 packages: 4 high,
-3 moderate, and 0 critical.
+The current `npm audit` reports 10 vulnerable packages: 4 high, 6 moderate,
+and 0 critical. Earlier Next.js production-path findings were resolved by
+updating Next.js and its matching ESLint config to `16.3.4` before this
+milestone. Milestone 5's `yazl` and `yauzl` archive dependencies did not
+introduce any of the currently reported findings.
 
 The remaining high findings all originate in the Prisma CLI package. BinVault's
 application runtime uses `@prisma/client`, the SQLite adapter, and
@@ -49,11 +51,14 @@ development/release workflows.
 | `mysql2` (high) | Cleartext credential leak through auth-plugin downgrade, GHSA-3f6p-5ww8-9rcr; `prisma > mysql2` | Bundled with the Prisma CLI, but BinVault supports SQLite only and never creates a MySQL connection. npm offers only the incompatible Prisma downgrade. | No; affected database API is unused |
 | `prisma` (high, direct) | Aggregate finding inherited from `@prisma/config`, `@prisma/dev`, and `mysql2`; root `prisma` dependency | CLI/release tooling exposure only; the production request path uses `@prisma/client`. Retained at 7.8.0 because npm's suggested 6.19.3 change is a major downgrade, not a safe patch. | No for trusted local/private use |
 
-The three remaining moderate findings are also below `prisma > @prisma/dev`
-(`@hono/node-server` and `valibot`, plus the aggregate `@prisma/dev` finding).
-BinVault does not start that development server or pass it untrusted requests.
-They are accepted on the same local-tooling basis until Prisma supplies a
-compatible dependency update.
+The six moderate package findings are `@hono/node-server`, `@prisma/dev`,
+`valibot` (Prisma development tooling), `@vitest/mocker`, `vitest` (test
+tooling), and `qs` (transitive dependency). A package's presence in the lockfile
+does not by itself prove request-path exposure or lack of exposure; review
+advisories and dependency paths when the lockfile changes. CI reports current
+findings but fails for critical severity. A new high finding in a production
+path requires explicit review before release. Avoid `npm audit fix --force`
+and incompatible major-version changes without compatibility assessment.
 
 ## Legacy database decision
 
