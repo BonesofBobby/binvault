@@ -9,8 +9,12 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
+    "production:check": "tsx scripts/production.ts check",
+    "production:init": "tsx scripts/production.ts init",
+    "production:ready": "tsx scripts/production.ts ready",
+    "production:start": "tsx scripts/production.ts start",
     "lint": "eslint",
     "test": "vitest",
     "test:run": "vitest run",

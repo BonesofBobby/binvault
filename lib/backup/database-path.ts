@@ -4,7 +4,7 @@ import path from "node:path";
 /** The adapter removes `file:` and passes the remainder to better-sqlite3. */
 export async function resolveDatabasePath(
   url = process.env.DATABASE_URL,
-  options: { requireExisting?: boolean } = {},
+  options: { requireExisting?: boolean; baseDirectory?: string } = {},
 ): Promise<string> {
   if (!url || !url.startsWith("file:") || url.includes("?") || url.includes("#")) {
     throw new Error("A file-backed SQLite database is required.");
@@ -16,7 +16,7 @@ export async function resolveDatabasePath(
     throw new Error("A file-backed SQLite database is required.");
   }
   // Runtime-only path: a configured database must not make Turbopack bundle the project tree.
-  const resolved = path.resolve(/*turbopackIgnore: true*/ process.cwd(), name);
+  const resolved = path.resolve(/*turbopackIgnore: true*/ options.baseDirectory ?? process.cwd(), name);
   let parent: string;
   try { parent = await realpath(path.dirname(resolved)); }
   catch { throw new Error("A regular file-backed SQLite database is required."); }

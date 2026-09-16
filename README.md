@@ -1,38 +1,11 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BinVault
 
-See [Backup and recovery](docs/BACKUP_RECOVERY.md) for portable backups and stopped-app restore instructions.
+BinVault tracks household inventory, containers, assets, documents, media, and activity. V1 runs as one local/private Node.js process with SQLite and filesystem uploads. It has no authentication; do not expose it directly to the public internet.
 
-## Getting Started
+For a production installation or update, follow [Production operation](docs/PRODUCTION.md). For portable backups and stopped-app restore, follow [Backup and recovery](docs/BACKUP_RECOVERY.md). The [security baseline](docs/SECURITY_BASELINE.md) records supported runtime and legacy-database limits.
 
-First, run the development server:
+Node 24 LTS and npm 11.17.0 are recommended; Node 22.12+ remains in the supported engine range. Install locked dependencies with `npm ci`. The v1 production build uses Webpack and bundled Geist fonts, so it does not fetch fonts at build time. Start with `npm run production:start` only after explicit migration and readiness checks.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+For development, configure a file-backed SQLite `DATABASE_URL`, run `npm ci` and `npx prisma generate`, apply `npx prisma migrate deploy` to a **development-only** database, and run `npm run dev`. The committed `.env.example` is a non-secret starting point. Set up locations, container types, and categories in Settings before adding containers. Do not run migration, seed, or restore commands against a database without checking the selected `DATABASE_URL` first.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Validation commands: `npm run test:run`, `npm run lint`, `npx tsc --noEmit`, and `npx prisma validate`.
