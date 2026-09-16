@@ -10,6 +10,8 @@ Production uses only `.env.production` or a shell `DATABASE_URL`. Shell values w
 
 The URL must be a regular file-backed SQLite URL (`file:./...`, `file:../...`, or `file:/...`). In-memory URLs, query options, symlinked DB files, and missing parent directories are unsupported. Shell overrides are useful for a disposable build, but they must be unset before operating on production data.
 
+Pages that read mutable inventory, container, dashboard, or reference data render from the runtime database. The build may use an empty disposable database without embedding its records in those pages; static navigation and other database-independent content can remain prerendered.
+
 ## First private home installation
 
 1. Create the separate checkout and run `npm ci`, then `npx prisma generate`. Do not run seed, `db push`, or `migrate reset`.

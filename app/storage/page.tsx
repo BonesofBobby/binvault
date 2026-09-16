@@ -6,6 +6,9 @@ import { ContainerStatusBadge } from "@/components/storage/container-status-badg
 import { PageHeader } from "@/components/ui/page-header";
 import { listContainers } from "@/lib/services/container-service";
 
+// The container list must read the selected runtime database on every request.
+export const dynamic = "force-dynamic";
+
 export default async function StoragePage() {
   const containers = await listContainers();
 
