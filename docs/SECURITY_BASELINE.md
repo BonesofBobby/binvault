@@ -1,11 +1,11 @@
-# BinVault v1.0 Security and Runtime Baseline
+# BinVault 1.0.0-rc.1 Security and Runtime Baseline
 
 This document records the security boundary reviewed on September 15, 2026. It
 is intentionally limited to the current local/private BinVault deployment.
 
 ## Supported deployment model
 
-BinVault v1.0 is a single-user, single-process local/private application. It has no
+BinVault 1.0.0-rc.1 is a single-operator, single-process local/private application. It has no
 authentication or authorization layer. Run it on a trusted computer and bind it
 to loopback, or restrict access to a trusted private network with host/network
 controls. Do not expose this version directly to the public internet. A broader
@@ -19,8 +19,8 @@ read-only pre-migration preflight, and explicit operator-controlled
 - Dependency floor: Next.js requires Node `20.9.0`; Prisma is the tighter
   constraint at Node `20.19.0`, `22.12.0`, or `24.0.0` on its supported lines.
 - Minimum supported BinVault Node.js: `22.12.0`. Node 20 meets the dependency
-  floor but is end-of-life, so it is not part of the v1.0 support baseline.
-- Recommended Node.js: Node 24 LTS, selected by `.nvmrc`.
+  floor but is end-of-life, so it is not part of the RC support baseline.
+- Recommended Node.js: Node 24 LTS, selected by `.nvmrc`. PR #10 fresh-install CI passed independently on Node 22 and 24.
 - Minimum npm: npm 10. The reviewed toolchain is npm `11.17.0`, declared in
   `package.json` for reproducible lockfile work.
 
@@ -71,7 +71,7 @@ This is **Option A: not a supported upgrade path**. Repository history shows
 that the legacy schema and seed preceded the inventory redesign, while both the
 destructive migration and the replacement `InventoryItem` seed preceded the
 first `v1.0.0` tag. No supported BinVault release used the legacy `Item` table.
-BinVault v1.0 support starts from the current migration chain/current schema;
+BinVault RC support starts from the current migration chain/current schema;
 pre-v1 experimental databases containing `Item` rows are not automatically
 upgradeable. Back up and manually export any such data before starting from the
 supported baseline. The already-applied historical migration is not rewritten.

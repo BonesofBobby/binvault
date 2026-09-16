@@ -82,19 +82,22 @@ Examples of business logic include:
 
 Application services coordinate business operations.
 
-Current service:
+Current services include:
 
 ```text
 lib/services/media-service.ts
+lib/services/inventory-lifecycle-service.ts
+lib/services/container-service.ts
+lib/services/reference-data-service.ts
+lib/services/event-service.ts
+lib/services/search-service.ts
+lib/services/dashboard/dashboard-service.ts
+lib/backup/
 ```
 
-Planned services may include:
+Future services may include:
 
 ```text
-lib/services/dashboard-service.ts
-lib/services/inventory-service.ts
-lib/services/container-service.ts
-lib/services/search-service.ts
 lib/services/qr-service.ts
 lib/services/document-service.ts
 lib/services/maintenance-service.ts
@@ -644,15 +647,15 @@ Avoid resetting the database unless the user explicitly accepts losing local dat
 
 # Dashboard Service Pattern
 
-Dashboard Intelligence should use one central service.
+Dashboard Intelligence is implemented through a focused dashboard service and supporting modules.
 
 Recommended location:
 
 ```text
-lib/services/dashboard-service.ts
+lib/services/dashboard/dashboard-service.ts
 ```
 
-The service should return one typed dashboard object containing the data required by the page.
+The service returns typed dashboard data required by the page. The following example is historical design guidance, not the current exported type:
 
 Example structure:
 
@@ -807,7 +810,7 @@ At minimum:
 - Review dependencies regularly
 - Add authorization checks before multi-user deployment
 
-Authentication, authorization, encryption, backups, and audit logging will require formal design before public deployment.
+Backup/recovery and append-only Activity & History are implemented for the local/private RC. Authentication, authorization, encryption, and public deployment require formal design before a broader deployment.
 
 ---
 
@@ -845,15 +848,15 @@ Best suited for:
 
 ## End-to-End Tests
 
-Critical future workflows include:
+Critical end-to-end workflows include:
 
 - Create an inventory item
 - Upload and remove a photo
 - Search for an item
 - Move an item between containers
-- Generate and open a QR label
 - View dashboard alerts
-- Upload a household document
+
+QR labels and household document uploads are deferred workflows and should be tested only when implemented.
 
 ---
 
@@ -920,11 +923,7 @@ Each major architectural choice should be documented through an Architectural De
 
 # Architectural Decision Records
 
-Significant decisions should be recorded in:
-
-```text
-docs/adr/
-```
+Significant decisions can be recorded in an ADR directory when one is created; `docs/adr/` does not currently exist. Do not cite it as an existing repository artifact.
 
 Recommended ADR structure:
 

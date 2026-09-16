@@ -1,12 +1,14 @@
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { checkProductionRuntime, initializeFreshDatabase, type RuntimeMode } from "../lib/production/runtime";
+import { loadProductionEnvironment } from "../lib/production/environment";
 
 async function main() {
   const command = process.argv[2];
   if (!(["check", "init", "ready", "start"] as string[]).includes(command)) {
     throw new Error("Use production:check, production:init, production:ready, or production:start.");
   }
+  loadProductionEnvironment();
   const mode: RuntimeMode = command === "check" ? "check" : "ready";
   const options = { environment: process.env.NODE_ENV ?? "production" };
   if (command === "init") {
