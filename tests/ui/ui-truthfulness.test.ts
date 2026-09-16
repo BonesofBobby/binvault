@@ -10,6 +10,13 @@ const source = (relativePath: string) =>
   readFile(path.join(repositoryRoot, relativePath), "utf8");
 
 describe("UI truthfulness", () => {
+    it("declares the dark theme at the application root", async () => {
+    const layout = await source("app/layout.tsx");
+
+    expect(layout).toMatch(
+      /className=\{`[^`]*\bdark\b[^`]*`\}/,
+    );
+  });
   it("exposes only supported primary destinations", () => {
     expect(primaryNavigation).toEqual([
       { label: "Home", href: "/" },
