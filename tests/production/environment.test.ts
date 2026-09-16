@@ -26,15 +26,23 @@ function run(root: string, script: string, shellDatabaseUrl?: string) {
 
 function resolve(root: string, shellDatabaseUrl?: string) {
   const modulePath = path.join(process.cwd(), "lib", "production", "environment.ts");
-  const script = `import { loadProductionEnvironment } from ${JSON.stringify(modulePath)}; console.log(loadProductionEnvironment(${JSON.stringify(root)}));`;
+  // TSX exposes this CommonJS-transformed TypeScript module as a default export
+  // in Node 22; Node 24 also synthesizes named exports. Use their shared shape.
+  const script = `import environment from ${JSON.stringify(modulePath)}; console.log(environment.loadProductionEnvironment(${JSON.stringify(root)}));`;
   return run(root, script, shellDatabaseUrl);
 }
 
 describe("production environment target", () => {
   it("loads the production file and lets the shell override it", async () => {
     const root = await site('DATABASE_URL="file:./data/from-file.db"\n');
-    expect(resolve(root).stdout.trim()).toBe("file:./data/from-file.db");
-    expect(resolve(root, "file:./data/from-shell.db").stdout.trim()).toBe("file:./data/from-shell.db");
+    const fromFile = resolve(root);
+    expect(fromFile.stderr).toBe("");
+    expect(fromFile.status).toBe(0);
+    expect(fromFile.stdout.trim()).toBe("file:./data/from-file.db");
+    const fromShell = resolve(root, "file:./data/from-shell.db");
+    expect(fromShell.stderr).toBe("");
+    expect(fromShell.status).toBe(0);
+    expect(fromShell.stdout.trim()).toBe("file:./data/from-shell.db");
   });
 
   it("fails without a configured database and rejects competing env files", async () => {
