@@ -1,4 +1,4 @@
-# Production operation (1.0.0-rc.1)
+# Production operation (1.0.0-rc.2)
 
 BinVault is a local/private, single-operator, single-process application. It has no authentication. Bind it to loopback or restrict access to a trusted private network; do not expose it to the public Internet. Use Node 24 LTS and npm 11.17.0; fresh-install CI also verifies Node 22.12+.
 
@@ -18,7 +18,7 @@ Pages that read mutable inventory, container, dashboard, or reference data rende
 2. Configure `.env.production`, create private writable `data/` and `public/uploads/`, and place backup storage **outside** the installation, ideally with a second copy on another device.
 3. Build against a disposable migrated SQLite database, never the installation DB. Create a unique temporary directory with a writable `data/` parent; set a shell `DATABASE_URL="file:/absolute/temp/path/build.db"`; run `npm run production:check`, `npm run production:init`, `NODE_ENV=production npx prisma migrate deploy`, and `npm run build`. Unset the shell override and remove the disposable directory. The Webpack build uses bundled Geist fonts; `npm ci` is the intended network step.
 4. With the production URL selected and BinVault stopped, run `npm run production:check`. It must report a fresh installation without creating a DB. Run `npm run production:init` (empty file only), `NODE_ENV=production npx prisma migrate deploy`, and `npm run production:ready`.
-5. Run `npm run production:start`. Check `GET /api/health` and `GET /api/ready` for HTTP 200 and `1.0.0-rc.1`. In Settings create the first Location and Container Type; Category is optional. Create a Container, an Inventory item, and a first photo. Create, download, and validate the first backup. Keep that ZIP outside the installation.
+5. Run `npm run production:start`. Check `GET /api/health` and `GET /api/ready` for HTTP 200 and `1.0.0-rc.2`. In Settings create the first Location and Container Type; Category is optional. Create a Container, an Inventory item, and a first photo. Create, download, and validate the first backup. Keep that ZIP outside the installation.
 
 `production:init` refuses an existing DB and never migrates or seeds. Preflight checks configuration, path permissions, recovery state, SQLite sidecars, integrity, and expected migration history. Readiness requires all migrations and a clean installation. The old experimental `Item` schema is not a supported automatic upgrade: its historical migration drops rows.
 

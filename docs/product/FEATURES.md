@@ -1,4 +1,4 @@
-# BinVault features (1.0.0-rc.1)
+# BinVault features (1.0.0-rc.2)
 
 | Area | Implemented now | Future/unsupported |
 | --- | --- | --- |
@@ -11,4 +11,4 @@
 | Operations | ZIP backup/validation, stopped-app restore/recovery, production checks/init/ready/start, health/readiness, Node 22/24 CI | Scheduled/encrypted/cloud backups, live restore, multi-process deployment |
 | Platform | Responsive desktop/mobile shell; local/private single operator | Authentication, public Internet, offline PWA, cloud sync |
 
-See [release notes](../releases/v1.0.0-rc.1.md) and [backlog](../FEATURE_BACKLOG.md). This replaces an older development-era feature table whose planned statuses no longer matched the application.
+See [release notes](../releases/v1.0.0-rc.2.md) and [backlog](../FEATURE_BACKLOG.md). This replaces an older development-era feature table whose planned statuses no longer matched the application.

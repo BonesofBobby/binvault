@@ -1,12 +1,12 @@
 # BinVault requirements and RC scope
 
-This document replaces the development-era concept specification that treated QR labels as a v1 requirement. For the exact candidate see [1.0.0-rc.1 notes](releases/v1.0.0-rc.1.md). QR remains future work.
+This document replaces the development-era concept specification that treated QR labels as a v1 requirement. For the exact candidate see [1.0.0-rc.2 notes](releases/v1.0.0-rc.2.md). QR remains future work.
 
 ## Purpose and deployment
 
 BinVault answers what a household owns, where it is kept, and what activity occurred. The first private production candidate runs locally with one trusted operator, one Node process, SQLite, and filesystem photo media. Authentication, public Internet exposure, and multi-user deployment are unsupported.
 
-## Required and implemented in 1.0.0-rc.1
+## Required and implemented in 1.0.0-rc.2
 
 - Manage hierarchical Locations, reusable Container Types, optional Categories, and Containers with guarded deletion.
 - Create, view, edit, move, and safely delete STANDARD_ITEM, ASSET, CONSUMABLE, and DOCUMENT inventory records. The latter three carry metadata; they are not complete asset/maintenance/document management workflows.

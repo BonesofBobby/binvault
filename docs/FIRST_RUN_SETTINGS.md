@@ -1,6 +1,6 @@
 # First-Run Settings and Reference Data
 
-BinVault 1.0.0-rc.1 starts with an empty migrated database and guides the user through creating
+BinVault 1.0.0-rc.2 starts with an empty migrated database and guides the user through creating
 the reusable values needed by normal inventory workflows. It does not create
 hidden defaults and does not run the development seed automatically.
 

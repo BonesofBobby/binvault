@@ -1,6 +1,6 @@
 # BinVault architecture
 
-BinVault 1.0.0-rc.1 is a local/private Next.js App Router application. Server-rendered pages and server actions call focused domain services; JSON routes support search, inventory photos, backup delivery, and health/readiness probes. Services use a global Prisma 7 client with the better-sqlite3 adapter and a local `StorageProvider` for media. SQLite lives at the configured `DATABASE_URL`; BinVault-managed files live under `public/uploads`.
+BinVault 1.0.0-rc.2 is a local/private Next.js App Router application. Server-rendered pages and server actions call focused domain services; JSON routes support search, inventory photos, backup delivery, and health/readiness probes. Services use a global Prisma 7 client with the better-sqlite3 adapter and a local `StorageProvider` for media. SQLite lives at the configured `DATABASE_URL`; BinVault-managed files live under `public/uploads`.
 
 ```mermaid
 flowchart TD
