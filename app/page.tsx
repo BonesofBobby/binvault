@@ -9,6 +9,9 @@ import { GlobalSearch } from "@/components/layout/global-search";
 import { PageHeader } from "@/components/ui/page-header";
 import { dashboardService } from "@/lib/services/dashboard/dashboard-service";
 
+// Dashboard data belongs to the runtime database, which can differ from the build database.
+export const dynamic = "force-dynamic";
+
 function formatGeneratedTime(date: Date): string {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",

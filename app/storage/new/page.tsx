@@ -8,6 +8,9 @@ import { AppBreadcrumbs } from "@/components/ui/app-breadcrumbs";
 import { PageHeader } from "@/components/ui/page-header";
 import { getContainerFormOptions } from "@/lib/services/container-service";
 
+// Form prerequisites can change independently of the database used for the build.
+export const dynamic = "force-dynamic";
+
 export default async function NewContainerPage() {
   const { locations, containerTypes } =
     await getContainerFormOptions();

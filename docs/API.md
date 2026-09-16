@@ -38,12 +38,12 @@ Location and container-type administration are not part of this workflow.
 ### Universal Search
 
 ```text
-GET /api/search?query=hdmi
+GET /api/search?q=hdmi
 ```
 
 Supported query parameters:
 
-- `query` or `q`: search text
+- `q`: search text
 - `limit`: maximum result count
 - `entityTypes`: comma-separated inventory, container, location, or category
   entity types
