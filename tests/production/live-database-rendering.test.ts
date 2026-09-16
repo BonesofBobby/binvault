@@ -6,6 +6,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 import Database from "better-sqlite3";
 import { expect, it } from "vitest";
+import packageJson from "../../package.json";
 import { makeProductionFixture } from "./fixtures";
 
 async function copyTrackedCheckout(source: string, destination: string) {
@@ -94,9 +95,9 @@ it("renders the populated runtime database after building against a separate emp
     expect(await page("/inventory/1/move")).toContain("Runtime test item");
     expect(await page("/storage/1/inventory/new")).toContain("Runtime test bin");
     expect(await page("/api/search?q=Runtime%20test%20item")).toContain("Runtime test item");
-    expect(await page("/api/health")).toContain('"version":"1.0.0-rc.1"');
+    expect(await page("/api/health")).toContain(`"version":"${packageJson.version}"`);
     expect(await page("/api/ready")).toContain('"status":"ready"');
-    expect(await page("/api/ready")).toContain('"version":"1.0.0-rc.1"');
+    expect(await page("/api/ready")).toContain(`"version":"${packageJson.version}"`);
   } finally {
     server?.kill("SIGTERM");
     await Promise.all([rm(checkout, { recursive: true, force: true }), build.cleanup(), runtime.cleanup()]);

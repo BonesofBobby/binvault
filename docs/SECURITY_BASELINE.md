@@ -1,11 +1,11 @@
-# BinVault 1.0.0-rc.1 Security and Runtime Baseline
+# BinVault 1.0.0-rc.2 Security and Runtime Baseline
 
 This document records the security boundary reviewed on September 15, 2026. It
 is intentionally limited to the current local/private BinVault deployment.
 
 ## Supported deployment model
 
-BinVault 1.0.0-rc.1 is a single-operator, single-process local/private application. It has no
+BinVault 1.0.0-rc.2 is a single-operator, single-process local/private application. It has no
 authentication or authorization layer. Run it on a trusted computer and bind it
 to loopback, or restrict access to a trusted private network with host/network
 controls. Do not expose this version directly to the public internet. A broader

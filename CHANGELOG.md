@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 1.0.0-rc.2 - 2026-09-16
+
+### Fixed
+
+- Corrected a release-blocking dark-theme foreground/contrast defect discovered during rc.1 dogfooding by declaring the semantic dark theme at the application root.
+- Added regression coverage protecting the root dark-theme contract so inherited foreground tokens remain readable on BinVault's dark interface.
+
+### Release compatibility
+
+- No schema, migration, data-model, backup-format, restore-protocol, or production-storage changes from rc.1.
+- Rc.2 supersedes rc.1 for continued private home dogfooding.
+
+
 ## 1.0.0-rc.1 - 2026-09-15
 
 ### Added
