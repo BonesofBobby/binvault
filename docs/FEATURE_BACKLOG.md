@@ -8,15 +8,7 @@ Features may move between this backlog and the product roadmap as priorities cha
 
 # High Priority
 
-## Dashboard Intelligence
-
-- Dashboard service
-- Summary cards
-- Attention Center
-- Recently added
-- Storage utilization
-- Household insights
-- Quick actions
+Dashboard service, summary cards, Attention Center, recently added items, storage utilization, household insights, and recent activity are implemented in 1.0.0-rc.1. Remaining quick-action improvements belong here as usability work.
 
 ---
 
@@ -32,6 +24,8 @@ Features may move between this backlog and the product roadmap as priorities cha
 
 ## Asset Management
 
+Purchase/warranty fields and asset metadata exist in the RC; the items below are fuller asset workflows.
+
 - Warranty tracking
 - Purchase information
 - Maintenance history
@@ -44,6 +38,8 @@ Features may move between this backlog and the product roadmap as priorities cha
 # Medium Priority
 
 ## Document Management
+
+DOCUMENT inventory metadata exists in the RC; a document file upload/center does not.
 
 - Insurance documents
 - Vehicle records

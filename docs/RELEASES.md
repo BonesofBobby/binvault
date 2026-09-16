@@ -1,141 +1,15 @@
-# BinVault Releases
+# BinVault releases
 
-This document summarizes the major product releases and the user-facing capabilities introduced in each version.
+## 1.0.0-rc.1 — private home release candidate
 
----
+**Status:** Prepared for review, not tagged or published. See [RC notes](releases/v1.0.0-rc.1.md), [changelog](../CHANGELOG.md), and [release checklist](RELEASE_CHECKLIST.md). It includes the inventory/container foundation, hierarchical Settings, photos, search, dashboard intelligence, Activity & History, responsive shell, backup/recovery, production runtime, probes, and Node 22/24 CI. It is a local/private single-operator RC, not final v1.0.0.
 
-# Version 1.0.0 — Foundation
+## Historical artifact
 
-**Status:** Released
+An older annotated `v1.0.0` tag points to earlier repository history. Its existing GitHub Release contains unrelated CJEF release notes. It is **not** the current BinVault production v1 release. This milestone leaves both untouched; the owner will make a deliberate correction decision before a final v1.0.0 release.
 
-## Summary
+The [v0.6.0 note](releases/v0.6.0.md) is development-era product history, not evidence of a published production release. Earlier roadmap documents described dashboard intelligence as a later version; that capability is already in this RC.
 
-The initial production-ready release of BinVault established the core architecture and inventory management capabilities.
+## Future directions
 
-### Highlights
-
-- Inventory management
-- Container management
-- Location management
-- Category management
-- Global search
-- Inventory detail pages
-- Image upload support
-- Responsive user interface
-- Prisma data model
-- Layered service architecture
-- Local storage provider abstraction
-
-### Engineering Improvements
-
-- Modular component architecture
-- Service layer pattern
-- Storage provider abstraction
-- Type-safe Prisma integration
-- ESLint and TypeScript validation
-- Production-oriented project organization
-
----
-
-# Version 1.1.0 — Dashboard Intelligence
-
-**Status:** In Progress
-
-## Goals
-
-Transform the dashboard into a Home Operations Center.
-
-### Implemented Features
-
-- Summary cards
-- Attention Center
-- Recently added items
-- Storage utilization
-- Household insights
-- Dashboard service
-- Automated dashboard service tests
-
-### Remaining Features
-
-- Recent activity
-- Quick actions
-
----
-
-# Version 1.2.0 — QR Platform
-
-**Status:** Planned
-
-## Goals
-
-Bridge the gap between physical storage and digital inventory.
-
-### Planned Features
-
-- QR code generation
-- Printable labels
-- Mobile QR scanning
-- Container lookup
-- Item lookup
-
----
-
-# Version 1.3.0 — Asset Management
-
-**Status:** Planned
-
-### Planned Features
-
-- Warranty tracking
-- Purchase information
-- Receipts
-- Manuals
-- Estimated values
-- Maintenance schedules
-
----
-
-# Version 1.4.0 — Document Center
-
-**Status:** Planned
-
-### Planned Features
-
-- Household documents
-- Insurance records
-- Vehicle records
-- Property records
-- Expiration tracking
-
----
-
-# Version 1.5.0 — Home Intelligence
-
-**Status:** Planned
-
-### Planned Features
-
-- Household insights
-- Storage recommendations
-- Duplicate detection
-- Missing information reports
-- Inventory health metrics
-
----
-
-# Version 2.0.0 — AI Assistant
-
-**Status:** Future
-
-### Vision
-
-Introduce AI-assisted organization, search, and household management while keeping the user in control of their data.
-
-Potential capabilities include:
-
-- Natural language search
-- Receipt OCR
-- Smart categorization
-- Inventory recommendations
-- Home maintenance suggestions
-- Intelligent summaries
+QR labels/scanning, maintenance workflows, document file upload/center, advanced asset/document workflows, reporting, collaboration, and cloud/offline capabilities remain future work. The older version numbers in historical plans are planning labels, not promised release tags or schedules.

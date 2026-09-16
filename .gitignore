@@ -49,6 +49,8 @@ dev.db
 
 # Prisma Studio temporary files
 *.db-journal
+*.db-wal
+*.db-shm
 
 # Local database
 dev.db

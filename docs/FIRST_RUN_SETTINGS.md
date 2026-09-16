@@ -1,6 +1,6 @@
 # First-Run Settings and Reference Data
 
-BinVault v1.0 starts with an empty database and guides the user through creating
+BinVault 1.0.0-rc.1 starts with an empty migrated database and guides the user through creating
 the reusable values needed by normal inventory workflows. It does not create
 hidden defaults and does not run the development seed automatically.
 
@@ -46,5 +46,5 @@ blocked deletion do not create success events.
 `prisma/seed.ts` remains development-only and destructive: it deletes existing
 inventory, containers, categories, container types, and locations before
 creating demonstration data. It must not be used as normal first-run setup.
-Users can complete v1.0 setup entirely through Settings without knowing about
+Users can complete RC setup entirely through Settings without knowing about
 Prisma or running a seed command.

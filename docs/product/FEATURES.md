@@ -1,98 +1,14 @@
-# BinVault Features
+# BinVault features (1.0.0-rc.1)
 
-> Current product capabilities
+| Area | Implemented now | Future/unsupported |
+| --- | --- | --- |
+| Reference data | Hierarchical Locations, Container Types, optional Categories; Settings bootstrap | Multi-user administration |
+| Containers | Create, list/detail, edit, guarded empty-container delete | Container photo workflow, QR labels |
+| Inventory | Standard items; asset, consumable, and document **metadata**; create/detail/edit/move/safe delete | Maintenance, full asset/document management, bulk/pagination |
+| Media | Inventory photo upload/delete (supported image types) | Document uploads and non-photo attachments |
+| Discovery | Inventory/container/location/category search; dashboard insights, attention, recent activity | Advanced reports/export and saved searches |
+| History | Append-only Activity & History for supported mutations | User attribution, notifications |
+| Operations | ZIP backup/validation, stopped-app restore/recovery, production checks/init/ready/start, health/readiness, Node 22/24 CI | Scheduled/encrypted/cloud backups, live restore, multi-process deployment |
+| Platform | Responsive desktop/mobile shell; local/private single operator | Authentication, public Internet, offline PWA, cloud sync |
 
----
-
-# Inventory Management
-
-| Feature | Status |
-|----------|--------|
-| Dashboard | ✅ Complete |
-| Live Dashboard Metrics | ✅ Complete |
-| Browse Storage Containers | ✅ Complete |
-| View Container Details | ✅ Complete |
-| Add Inventory | ✅ Complete |
-| Edit Inventory | ⏳ Planned |
-| Delete Inventory | ⏳ Planned |
-| Inventory Detail Page | ⏳ Planned |
-
----
-
-# Storage
-
-| Feature | Status |
-|----------|--------|
-| Container List | ✅ Complete |
-| Container Detail | ✅ Complete |
-| Create Container | ⏳ Planned |
-| Edit Container | ⏳ Planned |
-| Delete Container | ⏳ Planned |
-| Container Photos | ⏳ Planned |
-
----
-
-# Search
-
-| Feature | Status |
-|----------|--------|
-| Global Search | ⏳ Planned |
-| Search Inventory | ⏳ Planned |
-| Search Containers | ⏳ Planned |
-| Search Documents | ⏳ Planned |
-
----
-
-# QR Labels
-
-| Feature | Status |
-|----------|--------|
-| QR Generation | ⏳ Planned |
-| Printable Labels | ⏳ Planned |
-| Scan Container | ⏳ Planned |
-| Scan Inventory | ⏳ Planned |
-
----
-
-# Documents
-
-| Feature | Status |
-|----------|--------|
-| Receipts | ⏳ Planned |
-| Manuals | ⏳ Planned |
-| Warranties | ⏳ Planned |
-| Photos | ⏳ Planned |
-
----
-
-# Maintenance
-
-| Feature | Status |
-|----------|--------|
-| Maintenance Schedule | ⏳ Planned |
-| Replacement Reminders | ⏳ Planned |
-| Service History | ⏳ Planned |
-
----
-
-# AI
-
-| Feature | Status |
-|----------|--------|
-| AI Search | ⏳ Planned |
-| Duplicate Detection | ⏳ Planned |
-| Smart Suggestions | ⏳ Planned |
-
----
-
-# Platform
-
-| Feature | Status |
-|----------|--------|
-| Responsive Design | ✅ Complete |
-| SQLite Database | ✅ Complete |
-| Prisma ORM | ✅ Complete |
-| Server Actions | ✅ Complete |
-| GitHub Workflow | ✅ Complete |
-| Documentation | ✅ Complete |
-| Design System | 🔄 In Progress |
+See [release notes](../releases/v1.0.0-rc.1.md) and [backlog](../FEATURE_BACKLOG.md). This replaces an older development-era feature table whose planned statuses no longer matched the application.

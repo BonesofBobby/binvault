@@ -1,4 +1,4 @@
-import "dotenv/config";
+import { loadProductionEnvironment } from "../lib/production/environment";
 import { recoverInterrupted, restoreBackup } from "../lib/backup/restore";
 import { validateBackup } from "../lib/backup/validation";
 import { resolveDatabasePath } from "../lib/backup/database-path";
@@ -8,6 +8,7 @@ async function main() {
   const [operation, archive, confirmation] = process.argv.slice(2);
   if (operation === "recover") {
     if (archive !== "--confirm-stopped") throw new Error("Stop BinVault, then pass --confirm-stopped to recover an interrupted restore.");
+    loadProductionEnvironment();
     const databasePath = await resolveDatabasePath(undefined, { requireExisting: false });
     const restored = await recoverInterrupted({ databasePath,
       mediaRoot: path.join(process.cwd(), "public", "uploads"),
@@ -29,6 +30,7 @@ async function main() {
     if (confirmation !== "--confirm-stopped") {
       throw new Error("Stop BinVault first. Pass --confirm-stopped only after every BinVault process has exited.");
     }
+    loadProductionEnvironment();
     const result = await restoreBackup(archive);
     console.log(`Restore verified. Pre-restore safety backup: ${result.safetyPath}`);
     for (const warning of result.cleanupWarnings) console.log(`Warning: ${warning}`);

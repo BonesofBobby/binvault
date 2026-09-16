@@ -1,5 +1,7 @@
 # Backup and recovery (v1)
 
+`recovery:validate` is an offline archive check: it needs only the ZIP and compatible application migrations, not a production `DATABASE_URL` or access to live DB/media. For `recovery:restore` and `recovery:recover`, use the same `.env.production` or shell `DATABASE_URL` policy as [Production operation](PRODUCTION.md). Those stopped-app commands refuse competing env files, missing configuration, and `dev.db`; keep backup ZIPs outside the installation.
+
 BinVault backups are portable ZIP files. Each contains `manifest.json`, a consistent SQLite snapshot at `database/binvault.db`, and all regular files under BinVault's managed `public/uploads` tree at `media/<relative path>`. SHA-256 checksums and sizes are recorded for the database and each media file. The manifest includes useful record counts and warnings about database-referenced media missing from disk. Managed orphan files are included. The archive contains no environment variables, database URL, source code, or SQLite sidecars.
 
 ## Download and store a backup

@@ -1,171 +1,18 @@
-# BinVault Product Roadmap
+# BinVault product roadmap
 
-Version: 1.0
+Updated September 2026. Earlier development plans used 1.0 for the foundation and 1.1 for Dashboard Intelligence; those labels were planning milestones, not current production tags. The first private production candidate is **1.0.0-rc.1**.
 
-Last Updated: July 2026
+## Implemented in the RC
 
----
+Locations with hierarchy, Container Types, optional Categories, container and inventory lifecycle, standard-item and asset/consumable/document metadata, inventory photos, search, dashboard insights, Activity & History, responsive desktop/mobile shell, portable backups, stopped-app recovery, production checks/probes, and Node 22/24 CI.
 
-# Product Strategy
+## Next candidates
 
-BinVault is being developed through incremental releases, with each version delivering meaningful user value while strengthening the application's architecture.
+- QR labels, printing, and scanning.
+- Maintenance scheduling/history and notifications.
+- Document file uploads and a document center; asset/document metadata alone does not provide these workflows.
+- Advanced reports/export, bulk actions, pagination, and media reconciliation.
 
-Each release should be production-ready, documented, and thoroughly tested before merging into the main branch.
+## Longer-term possibilities
 
----
-
-# Version 1.0 — Foundation ✅
-
-Status: Complete
-
-Core functionality established:
-
-- Dashboard
-- Locations
-- Containers
-- Inventory Items
-- Categories
-- Search
-- Media Upload Platform
-- Inventory Detail Pages
-- Responsive UI
-- Prisma Data Model
-- Storage Provider Architecture
-
----
-
-# Version 1.1 — Dashboard Intelligence 🚧
-
-Goal:
-
-Transform the dashboard into a Home Operations Center.
-
-Planned Features:
-
-- Dashboard summary cards
-- Attention Center
-- Recent activity
-- Recently added items
-- Storage utilization
-- Household insights
-- Quick actions
-- Dashboard service layer
-
----
-
-# Version 1.2 — QR Platform
-
-Goal:
-
-Provide fast physical navigation of stored items.
-
-Features:
-
-- QR label generation
-- Printable labels
-- Mobile QR scanning
-- Container lookup
-- Item lookup
-- Scan history
-
----
-
-# Version 1.3 — Asset Management
-
-Goal:
-
-Expand BinVault beyond inventory tracking.
-
-Features:
-
-- Purchase information
-- Warranty tracking
-- Receipts
-- Manuals
-- Estimated values
-- Depreciation (optional)
-- Maintenance scheduling
-
----
-
-# Version 1.4 — Documents
-
-Goal:
-
-Centralize important household records.
-
-Features:
-
-- Document uploads
-- Insurance records
-- Property records
-- Vehicle documents
-- Searchable document metadata
-- Expiration reminders
-
----
-
-# Version 1.5 — Home Intelligence
-
-Goal:
-
-Provide actionable household insights.
-
-Examples:
-
-- Low inventory alerts
-- Expiring warranties
-- Missing photos
-- Duplicate items
-- Storage optimization suggestions
-- Household statistics
-
----
-
-# Version 2.0 — AI Assistant
-
-Goal:
-
-Introduce natural language interactions and intelligent automation.
-
-Potential Features:
-
-- Natural language search
-- Receipt OCR
-- Automatic categorization
-- Duplicate detection
-- AI-generated summaries
-- Inventory recommendations
-- Home organization suggestions
-
----
-
-# Future Vision
-
-Potential long-term capabilities include:
-
-- Multi-property support
-- Family collaboration
-- Shared inventories
-- Offline/mobile-first experience
-- Insurance export packages
-- Disaster recovery kits
-- Barcode support
-- NFC support
-- Voice assistant integration
-- Smart home integrations
-
----
-
-# Release Philosophy
-
-Each release should:
-
-- Solve a meaningful user problem
-- Maintain architectural consistency
-- Include updated documentation
-- Pass linting and type checks
-- Be accompanied by release notes
-- Preserve backward compatibility whenever practical
-
-BinVault will grow through small, high-quality releases rather than large, infrequent changes.
+Authentication, multi-user collaboration, public deployment, offline PWA, cloud sync/storage, scheduled/encrypted backups, and AI-assisted workflows need separate design and release decisions. See [feature backlog](FEATURE_BACKLOG.md) for unscheduled ideas and [RC scope](releases/v1.0.0-rc.1.md) for current limits.

@@ -5,7 +5,7 @@
 BinVault uses server-rendered pages and Next.js server actions for current
 container and inventory management. Internal JSON API routes are used only
 where browser-side behavior requires them, currently search and inventory
-media operations.
+media, backup delivery, and health/readiness operations.
 
 ## Base API Path
 
@@ -83,8 +83,6 @@ Deletes one media record and its stored file.
 
 ## Inventory Lifecycle
 
-## Inventory Lifecycle
-
 Inventory creation, editing, movement, and full-record deletion use server
 actions rather than public JSON endpoints.
 
@@ -158,7 +156,13 @@ deletion, replay, export, notification, analytics, or automation workflow.
 
 ---
 
-## Planned API Areas
+## Production probes and backup
+
+`GET /api/health` returns HTTP 200 with process status and the canonical `package.json` version. `GET /api/ready` returns HTTP 200 or 503 with readiness check names and the same version; neither returns internal paths or secrets.
+
+`POST /api/backup` creates a staged ZIP and returns a short-lived download token plus a record/media summary. `GET /api/backup?token=...` streams the prepared ZIP; without a token it creates and streams a new backup. Keep the endpoint on a trusted private network: this RC has no authentication. Browser upload/restore is not implemented; `recovery:validate`, `recovery:restore`, and `recovery:recover` are stopped-app operator CLI workflows. See [Backup and recovery](BACKUP_RECOVERY.md).
+
+## Future API areas
 
 There are currently no JSON endpoints for container CRUD, full inventory CRUD,
 inventory movement, inventory deletion, locations, categories, container types,

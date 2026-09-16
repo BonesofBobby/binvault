@@ -29,6 +29,9 @@ InventoryItem
   ├── belongs to one Container
   ├── may belong to one Category
   └── has one InventoryType
+```
+
+The current schema also contains inventory Media records and append-only Events.
 
 ## Application Events
 
